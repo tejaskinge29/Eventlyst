@@ -1,5 +1,6 @@
 import 'package:app1/utils/routes.dart';
 import 'package:flutter/material.dart';
+
 class SignupPage extends StatelessWidget {
   const SignupPage({super.key});
 
@@ -9,122 +10,139 @@ class SignupPage extends StatelessWidget {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            Text("SIGN UP",
-            style: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.w300,
-              height: 6,
+            SizedBox(height: MediaQuery.of(context).size.height * 0.12),
+            Text(
+              "SIGN UP",
+              style: TextStyle(
+                fontSize: MediaQuery.of(context).size.width * 0.08,
+                fontWeight: FontWeight.w300,
+                // height: 6,
+              ),
             ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.01,
             ),
-
-            Text("Lets Get Started !",
-            style: TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: 25,
+            Text(
+              "Lets Get Started !",
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: MediaQuery.of(context).size.width * 0.05,
+                // fontSize: 25,
+              ),
             ),
-            ),
-            SizedBox(height: 10),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
             Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0 , horizontal: 30.0),
+                padding: EdgeInsets.symmetric(
+                    vertical: MediaQuery.of(context).size.height * 0.01,
+                    horizontal: MediaQuery.of(context).size.width * 0.1),
                 child: Column(
                   children: [
                     TextFormField(
                       decoration: InputDecoration(
-                        hintText:"Enter Your Full Name",
-                        labelText:"Name",
+                        hintText: "Enter Your Full Name",
+                        labelText: "Name",
                       ),
                     ),
                   ],
-                )
-            ),
+                )),
+            // SizedBox(height: MediaQuery.of(context).size.height * 0.01),
             Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0 , horizontal: 30.0),
+                padding: EdgeInsets.symmetric(
+                    vertical: MediaQuery.of(context).size.height * 0.01,
+                    horizontal: MediaQuery.of(context).size.width * 0.1),
                 child: Column(
                   children: [
                     TextFormField(
                       decoration: InputDecoration(
-                        hintText:"Enter Your Username",
-                        labelText:"Username",
+                        hintText: "Enter Your Username",
+                        labelText: "Username",
                       ),
                     ),
                   ],
-                )
-            ),
+                )),
             Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0 , horizontal: 30.0),
+                padding: EdgeInsets.symmetric(
+                    vertical: MediaQuery.of(context).size.height * 0.01,
+                    horizontal: MediaQuery.of(context).size.width * 0.1),
                 child: Column(
                   children: [
                     TextFormField(
                       decoration: InputDecoration(
-                        hintText:"Enter Your Email ID",
-                        labelText:"Email",
+                        hintText: "Enter Your Email ID",
+                        labelText: "Email",
                       ),
                     ),
                   ],
-                )
-            ),
+                )),
             Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0 , horizontal: 30.0),
+                padding: EdgeInsets.symmetric(
+                    vertical: MediaQuery.of(context).size.height * 0.01,
+                    horizontal: MediaQuery.of(context).size.width * 0.1),
                 child: Column(
                   children: [
                     TextFormField(
                       decoration: InputDecoration(
-                        hintText:"Create Password",
-                        labelText:"Password",
+                        hintText: "Create Password",
+                        labelText: "Password",
                       ),
                     ),
                   ],
-                )
-            ),
+                )),
             Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0 , horizontal: 30.0),
+                padding: EdgeInsets.symmetric(
+                    vertical: MediaQuery.of(context).size.height * 0.01,
+                    horizontal: MediaQuery.of(context).size.width * 0.1),
                 child: Column(
                   children: [
                     TextFormField(
                       decoration: InputDecoration(
-                        hintText:"Your Password",
-                        labelText:"Confirm Password",
+                        hintText: "Your Password",
+                        labelText: "Confirm Password",
                       ),
                     ),
                   ],
-                )
+                )),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.03,
             ),
-            SizedBox(height: 4,),
-            ElevatedButton(onPressed:(){
-              Navigator.pushNamed(context, MyRoutes.homeRoute);
-            } , child: Text("Register"),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, MyRoutes.homeRoute);
+              },
+              child: Text("Register"),
               style: TextButton.styleFrom(
-                minimumSize:Size(140,50),
+                minimumSize: Size(140, 50),
                 backgroundColor: Colors.black,
               ),
-
             ),
-            SizedBox(height: 10,),
-            Text("or sign up using",),
-            SizedBox(height: 20,),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+            Text(
+              "or sign up using",
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             Container(
               child: Column(
                 children: [
-                  Image.asset("assets/images/google.png",
-                    height: 45,
-                    width: 45,),
+                  Image.asset(
+                    "assets/images/google.png",
+                    height: MediaQuery.of(context).size.height * 0.045,
+                    width: MediaQuery.of(context).size.width * 0.12,
+                  ),
                 ],
               ),
             ),
             Container(
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-
-                    Text("Already have an account ?"),
-                    TextButton(onPressed: (){
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Already have an account ?"),
+                TextButton(
+                    onPressed: () {
                       Navigator.pushNamed(context, MyRoutes.loginRoute);
-                    } ,child:Text("Login.")),
-                  ] ,
-                )
-
-            )
-
+                    },
+                    child: Text("Login.")),
+              ],
+            ))
           ],
         ),
       ),

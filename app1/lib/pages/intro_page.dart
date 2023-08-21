@@ -6,72 +6,74 @@ class IntroPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Image.asset("assets/images/intro.png",
-              height: 750,
-            ),
-        Text("Welcome To",
-            style:TextStyle(
-              height: -19,
-              fontWeight: FontWeight.w400,
-              fontSize: 35,
-            )),
-            SizedBox(height: 20,),
-            Text("Eventlyst",
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Column(
+        children: [
+          SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+          Text(
+            "Welcome To",
             style: TextStyle(
-              height: -9,
-              fontSize: 28,
-              fontWeight: FontWeight.w800,
+              fontSize: MediaQuery.of(context).size.width * 0.08,
             ),
+          ),
+          Text(
+            "Eventlyst",
+            style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width * 0.07,
+              fontWeight: FontWeight.bold,
             ),
-            SizedBox(height: 70,),
-            Container(
-              child:Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(onPressed:(){
-                    // login path
+          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.20),
+          Image.asset(
+            "assets/images/intro.png",
+            width: MediaQuery.of(context).size.width * 0.5,
+            height: MediaQuery.of(context).size.width * 0.5,
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.20,
+          ),
+          Container(
+            alignment: Alignment.bottomCenter,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: () {
                     Navigator.pushNamed(context, MyRoutes.loginRoute);
                   },
-                    child:
-                    Text("Login",
-                      style: TextStyle(
-                        fontSize: 25,
-                        color: Colors.black,
-                      fontWeight: FontWeight.w400),
+                  child: Text(
+                    "Login",
+                    style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width * 0.06,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
-                  VerticalDivider(
-                    color: Colors.black,
-                    width: 70,
-                    thickness: 4,
-                  ),
-                  TextButton(onPressed:(){
-                    // Sign up path
+                ),
+                VerticalDivider(
+                  color: Colors.black,
+                  width: MediaQuery.of(context).size.width * 0.2,
+                  thickness: 4,
+                ),
+                TextButton(
+                  onPressed: () {
                     Navigator.pushNamed(context, MyRoutes.signupRoute);
                   },
-                    child:
-                    Text("Sign Up",
-                      style: TextStyle(
-                        fontSize: 25,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400,
-                      ),
+                  child: Text(
+                    "Sign Up",
+                    style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width * 0.06,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
-                ],
-              )
-
-              ),
-
-
-    ],
-        ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
-}
+  }
 }

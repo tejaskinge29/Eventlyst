@@ -15,23 +15,36 @@ class _MyHeaderDrawerState extends State<MyHeaderDrawer> {
       color: Colors.black,
       width: double.infinity,
       height: 200,
-      padding:EdgeInsets.only(top:20.0),
+      padding: EdgeInsets.only(top: 20.0),
       child: Column(
-       mainAxisAlignment: MainAxisAlignment.center,
-        children: [Padding(padding: EdgeInsets.symmetric(horizontal: 20.0 , vertical: 10.0),),
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+          ),
           Container(
             margin: EdgeInsets.only(bottom: 0),
             height: 70,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(
-                  image: AssetImage('assets/images/profile.png'),
+                image: AssetImage('assets/images/profilew.png'),
               ),
               // image section ;
             ),
           ),
-          TextButton(onPressed: (){Navigator.pushNamed(context, MyRoutes.profileRoute);}, child: Text("Pawan Balpande",style: TextStyle(color: Colors.white,fontSize: 15),)),
-          Text("pawanbalpande00@gmail.com", style: TextStyle(fontSize: 12, color: Colors.white),)
+          TextButton(
+              onPressed: () {
+                Navigator.pushNamed(context, MyRoutes.profileRoute);
+              },
+              child: Text(
+                "Pawan Balpande",
+                style: TextStyle(color: Colors.white, fontSize: 15),
+              )),
+          Text(
+            "pawanbalpande00@gmail.com",
+            style: TextStyle(fontSize: 12, color: Colors.white),
+          )
         ],
       ),
     );

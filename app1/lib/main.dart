@@ -13,6 +13,7 @@ import 'package:app1/pages/settings.dart';
 import 'package:app1/utils/routes.dart';
 import 'package:app1/pages/signup_page.dart';
 import 'package:flutter/material.dart';
+// import 'package:app1/pages/profile.dart';
 
 void main() {
   runApp(MyApp());
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
         MyRoutes.settingRoute: (context) => Mysettings(),
         MyRoutes.FeedbackRoute: (context) => Myfeedback(),
         MyRoutes.searchRoute: (context) => Search_Page(),
-        MyRoutes.profileRoute: (context) => ProfileApp(),
+        MyRoutes.profileRoute: (context) => ProfilePage(),
       },
     );
   }
