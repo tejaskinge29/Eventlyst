@@ -6,8 +6,13 @@ class SignupPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: SingleChildScrollView(
+    return Scaffold(
+      // child: GestureDetector(
+      //   onTap: () {
+      //     // Hide the keyboard when tapping outside of the input fields
+      //     FocusScope.of(context).unfocus();
+      //   },
+      body: SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(height: MediaQuery.of(context).size.height * 0.12),
@@ -81,6 +86,7 @@ class SignupPage extends StatelessWidget {
                 child: Column(
                   children: [
                     TextFormField(
+                      obscureText: true,
                       decoration: InputDecoration(
                         hintText: "Create Password",
                         labelText: "Password",
@@ -95,6 +101,7 @@ class SignupPage extends StatelessWidget {
                 child: Column(
                   children: [
                     TextFormField(
+                      obscureText: true,
                       decoration: InputDecoration(
                         hintText: "Your Password",
                         labelText: "Confirm Password",

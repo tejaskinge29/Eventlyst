@@ -2,8 +2,6 @@ import 'package:app1/utils/routes.dart';
 import 'package:flutter/material.dart';
 
 class IntroPage extends StatelessWidget {
-  const IntroPage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,6 +15,11 @@ class IntroPage extends StatelessWidget {
               fontSize: MediaQuery.of(context).size.width * 0.08,
             ),
           ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+          Image.asset(
+            "assets/images/intro.png",
+            width: MediaQuery.of(context).size.width * 0.6,
+          ),
           Text(
             "Eventlyst",
             style: TextStyle(
@@ -24,14 +27,8 @@ class IntroPage extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.20),
-          Image.asset(
-            "assets/images/intro.png",
-            width: MediaQuery.of(context).size.width * 0.5,
-            height: MediaQuery.of(context).size.width * 0.5,
-          ),
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.20,
+            height: MediaQuery.of(context).size.height * 0.15,
           ),
           Container(
             alignment: Alignment.bottomCenter,
@@ -45,7 +42,7 @@ class IntroPage extends StatelessWidget {
                   child: Text(
                     "Login",
                     style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width * 0.06,
+                      fontSize: MediaQuery.of(context).size.width * 0.05,
                       color: Colors.black,
                       fontWeight: FontWeight.w400,
                     ),
@@ -63,7 +60,7 @@ class IntroPage extends StatelessWidget {
                   child: Text(
                     "Sign Up",
                     style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width * 0.06,
+                      fontSize: MediaQuery.of(context).size.width * 0.05,
                       color: Colors.black,
                       fontWeight: FontWeight.w400,
                     ),

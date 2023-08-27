@@ -39,11 +39,15 @@ class _MyHeaderDrawerState extends State<MyHeaderDrawer> {
               },
               child: Text(
                 "Pawan Balpande",
-                style: TextStyle(color: Colors.white, fontSize: 15),
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: MediaQuery.of(context).size.width * 0.04),
               )),
           Text(
             "pawanbalpande00@gmail.com",
-            style: TextStyle(fontSize: 12, color: Colors.white),
+            style: TextStyle(
+                fontSize: MediaQuery.of(context).size.width * 0.03,
+                color: Colors.white),
           )
         ],
       ),

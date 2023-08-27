@@ -66,6 +66,13 @@ flutter:
       - assets/images/profile.png
       - assets/images/profilew.png
       - assets/images/org.png
+      - assets/images/feedb.png
+      - assets/images/feedw.png
+      - assets/images/home.png
+      - assets/images/file.png
+      - assets/images/search.png
+
+      
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

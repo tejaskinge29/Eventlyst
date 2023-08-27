@@ -1,19 +1,6 @@
+import 'package:app1/pages/orgPage.dart';
 import 'package:flutter/material.dart';
 import 'package:app1/utils/routes.dart';
-
-// void main() {
-//   runApp(Profileedit());
-// }
-
-// class Profileedit extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Profile Example',
-//       home: ProfilePage(),
-//     );
-//   }
-// }
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -120,6 +107,7 @@ class ToggleButtonsExample extends StatefulWidget {
 }
 
 class _ToggleButtonsExampleState extends State<ToggleButtonsExample> {
+  int selectedTabIndex = 0;
   List<bool> isSelected = [true, false];
 
   void _onButtonPressed(int index) {
@@ -135,40 +123,95 @@ class _ToggleButtonsExampleState extends State<ToggleButtonsExample> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: ToggleButtons(
-        isSelected: isSelected,
-        onPressed: _onButtonPressed,
+      child: Column(
         children: [
-          Container(
-            width: 150, // Adjust the width as needed
-            child: Center(
-              child: Text(
-                'Event Hosted',
-                style: TextStyle(
-                  fontSize: 15,
-                  color: isSelected[0] ? Colors.white : Colors.black,
+          ToggleButtons(
+            isSelected: isSelected,
+            onPressed: (index) {
+              // Update the isSelected list and selectedTabIndex
+              setState(() {
+                for (int buttonIndex = 0;
+                    buttonIndex < isSelected.length;
+                    buttonIndex++) {
+                  isSelected[buttonIndex] = buttonIndex == index;
+                }
+                selectedTabIndex = index;
+              });
+            },
+            children: [
+              Container(
+                width: 150, // Adjust the width as needed
+                child: Center(
+                  child: Text(
+                    'Event Hosted',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: isSelected[0] ? Colors.white : Colors.black,
+                    ),
+                  ),
                 ),
               ),
-            ),
+              Container(
+                width: 150, // Adjust the width as needed
+                child: Center(
+                  child: Text(
+                    'Attended',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: isSelected[1] ? Colors.white : Colors.black,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+            selectedColor: Colors.black,
+            color: Colors.white,
+            fillColor: Colors.black,
+            borderRadius: BorderRadius.circular(8.0),
           ),
-          Container(
-            width: 150, // Adjust the width as needed
-            child: Center(
-              child: Text(
-                'Attended',
-                style: TextStyle(
-                  fontSize: 15,
-                  color: isSelected[1] ? Colors.white : Colors.black,
-                ),
-              ),
-            ),
+          // Display the appropriate panel based on the selectedTabIndex
+          Visibility(
+            visible: selectedTabIndex == 0,
+            child: HostedPanel(),
+          ),
+          Visibility(
+            visible: selectedTabIndex == 1,
+            child: AttendedPanel(),
           ),
         ],
-        selectedColor: Colors.black,
-        color: Colors.white,
-        fillColor: Colors.black,
-        borderRadius: BorderRadius.circular(8.0),
       ),
+    );
+  }
+}
+
+class HostedPanel extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          "Event Hosted Panel",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        // Add your hosted panel content here
+        // For example, you can add more widgets like Text, Buttons, etc.
+      ],
+    );
+  }
+}
+
+class AttendedPanel extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          "Attended Panel",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        // Add your attended panel content here
+        // For example, you can add more widgets like Text, Buttons, etc.
+      ],
     );
   }
 }

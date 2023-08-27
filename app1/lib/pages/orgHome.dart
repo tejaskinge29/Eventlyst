@@ -134,13 +134,13 @@ class _ToggleButtonsExampleState extends State<ToggleButtonsExample> {
                               BlendMode.srcIn,
                             ),
                             child: Image.asset(
-                              'assets/feedw.png',
+                              'assets/images/feedw.png',
                               width: 25,
                               height: 25,
                             ),
                           )
                         : Image.asset(
-                            'assets/feedb.png',
+                            'assets/images/feedb.png',
                             width: 25,
                             height: 25,
                           ),

@@ -10,11 +10,11 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-
+  final TextEditingController _emailController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: SingleChildScrollView(
+    return Scaffold(
+      body: SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(
@@ -41,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
               height: MediaQuery.of(context).size.height * 0.02,
             ),
             Text(
-              "Please sign in to continue !",
+              "Please sign in to continue.",
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width * 0.04,
                 fontWeight: FontWeight.w500,
@@ -56,12 +56,29 @@ class _LoginPageState extends State<LoginPage> {
               child: Form(
                 key: _formKey,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextFormField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         hintText: "Enter Username",
                         labelText: "Username",
                       ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter your ID';
+                        }
+                        // Regular expression to validate Gmail format
+                        RegExp gmailPattern = RegExp(
+                          r"^[a-zA-Z0-9._%+-]+@(gmail\.com|ycce\.in|ycce\.org)$",
+                          caseSensitive: false,
+                        );
+                        if (!gmailPattern.hasMatch(value)) {
+                          return 'Please enter a valid Gmail ID';
+                        }
+                        return null;
+                      },
                     ),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.02,
@@ -84,8 +101,10 @@ class _LoginPageState extends State<LoginPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                // Navigator.pushNamed(context, '/homeRoute');
-                Navigator.pushNamed(context, MyRoutes.homeRoute);
+                if (_formKey.currentState!.validate()) {
+                  // Navigator.pushNamed(context, '/homeRoute');
+                  Navigator.pushNamed(context, MyRoutes.homeRoute);
+                }
               },
               child: Text("LogIn"),
               style: ElevatedButton.styleFrom(

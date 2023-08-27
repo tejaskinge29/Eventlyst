@@ -15,9 +15,7 @@ class _MyDrawerListState extends State<MyDrawerList> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          SizedBox(
-            height: 440,
-          ),
+          // SizedBox(height: MediaQuery.of(context).size.height * 0.45),
           ListTile(
               title: TextButton(
             onPressed: () {
@@ -26,9 +24,10 @@ class _MyDrawerListState extends State<MyDrawerList> {
             child: Text(
               "Bookmark",
               style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24),
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: MediaQuery.of(context).size.width * 0.06,
+              ),
             ),
           )),
           ListTile(
@@ -39,9 +38,10 @@ class _MyDrawerListState extends State<MyDrawerList> {
             child: Text(
               "Feedback",
               style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24),
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: MediaQuery.of(context).size.width * 0.06,
+              ),
             ),
           )),
           ListTile(
@@ -52,9 +52,10 @@ class _MyDrawerListState extends State<MyDrawerList> {
             child: Text(
               "Settings",
               style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24),
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: MediaQuery.of(context).size.width * 0.06,
+              ),
             ),
           )),
           ListTile(
@@ -65,9 +66,10 @@ class _MyDrawerListState extends State<MyDrawerList> {
             child: Text(
               "Sign Out",
               style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 22),
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: MediaQuery.of(context).size.width * 0.06,
+              ),
             ),
           )),
         ],

@@ -1,4 +1,4 @@
-import 'package:app1/My_Drawer_List.dart';
+import 'package:app1/pages/My_Drawer_List.dart';
 import 'package:app1/pages/My_Drawer_Header.dart';
 import 'package:app1/pages/post_page.dart';
 import 'package:app1/utils/routes.dart';
@@ -38,6 +38,7 @@ class HomePage extends StatelessWidget {
               child: Column(
                 children: [
                   MyHeaderDrawer(),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.45),
                   MyDrawerList(),
                 ],
               ),
@@ -45,16 +46,13 @@ class HomePage extends StatelessWidget {
           ),
         ),
         bottomNavigationBar: Container(
+          height: (MediaQuery.of(context).size.height * 0.1),
           color: Colors.black,
-          // width: 100,
-          // height: 100,
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: GNav(
               gap: 12,
-              iconSize: 24,
-              backgroundColor: Colors.black,
+              // backgroundColor: Colors.black,
               color: Colors.white,
               activeColor: Colors.white,
               tabBackgroundColor: Colors.black,

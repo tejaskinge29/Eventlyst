@@ -10,7 +10,7 @@ class orgLogin extends StatefulWidget {
 }
 
 class _orgLoginState extends State<orgLogin> {
-  final _formfield = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final emailcontroller = TextEditingController();
   final passcontroller = TextEditingController();
   bool passToggle = true;
@@ -26,7 +26,7 @@ class _orgLoginState extends State<orgLogin> {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
           child: Form(
-            key: _formfield,
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               // mainAxisAlignment: MainAxisAlignment.center,
@@ -52,21 +52,36 @@ class _orgLoginState extends State<orgLogin> {
                   keyboardType: TextInputType.emailAddress,
                   controller: emailcontroller,
                   decoration: InputDecoration(
-                    hintText: "Enter your Organisation Email id",
+                    hintText: "Enter your Organisation E-ID",
                     labelText: "Email Id",
-                    border: OutlineInputBorder(),
+                    // border: OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return "Enter Email";
+                      return 'Please enter your Gmail ID';
                     }
-                    bool emailValid = RegExp(
-                            r"^[a-zA-Z0-9.a-zA-Z0-9.!#!$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                        .hasMatch(value);
-                    if (!emailValid) {
-                      return "Enter Valid Email";
+                    // Regular expression to validate Gmail format
+                    RegExp gmailPattern = RegExp(
+                      r"^[a-zA-Z0-9._%+-]+@(gmail\.com|ycce\.in|ycce\.org)$",
+                      // r"^[a-zA-Z0-9._%+-]+@(gmail\.com|example\.in|example\.org)$",
+                      caseSensitive: false,
+                    );
+                    if (!gmailPattern.hasMatch(value)) {
+                      return 'Please enter a valid Gmail ID';
                     }
+                    return null;
                   },
+                  // validator: (value) {
+                  //   if (value!.isEmpty) {
+                  //     return "Enter Email";
+                  //   }
+                  //   bool emailValid = RegExp(
+                  //           r"^[a-zA-Z0-9.a-zA-Z0-9.!#!$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                  //       .hasMatch(value);
+                  //   if (!emailValid) {
+                  //     return "Enter Valid Email";
+                  //   }
+                  // },
                 ),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.04,
@@ -78,7 +93,7 @@ class _orgLoginState extends State<orgLogin> {
                   decoration: InputDecoration(
                     hintText: "Enter your password",
                     labelText: "Password",
-                    border: OutlineInputBorder(),
+                    // border: OutlineInputBorder(),
                     suffix: InkWell(
                       onTap: () {
                         setState(() {
@@ -100,30 +115,17 @@ class _orgLoginState extends State<orgLogin> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.04,
                 ),
-                InkWell(
-                  onTap: () {
-                    if (_formfield.currentState!.validate()) {
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      // Navigator.pushNamed(context, '/homeRoute');
                       Navigator.pushNamed(context, MyRoutes.orghomeRoute);
-                      emailcontroller.clear();
-                      passcontroller.clear();
                     }
                   },
-                  child: Container(
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "LogIn",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
+                  child: Text("LogIn"),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(140, 50),
+                    primary: Colors.black,
                   ),
                 ),
                 SizedBox(

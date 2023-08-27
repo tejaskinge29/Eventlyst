@@ -9,9 +9,7 @@ class Search_Page extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: const Text("Search"),
-        actions: <Widget>[
-
-        ],
+        actions: <Widget>[],
       ),
       body: Container(
         alignment: Alignment.topCenter,
@@ -30,25 +28,47 @@ class Search_Page extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: Container(
+        height: (MediaQuery.of(context).size.height * 0.1),
         color: Colors.black,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: GNav(
             gap: 12,
-            backgroundColor: Colors.black,
+            // backgroundColor: Colors.black,
             color: Colors.white,
             activeColor: Colors.white,
             tabBackgroundColor: Colors.black,
             tabs: [
-              GButton(onPressed: () {
-                Navigator.pushNamed(context, MyRoutes.homeRoute,);
-              }, icon: Icons.home,),
-              GButton(onPressed: () {Navigator.pushNamed(context, MyRoutes.searchRoute);}, icon: Icons.search,),
-              GButton(onPressed: () {Navigator.pushNamed(context, MyRoutes.postRoute);}, icon: Icons.post_add,),
               GButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, MyRoutes.orgRoute,);
-                }, icon: Icons.school,),
+                  Navigator.pushNamed(
+                    context,
+                    MyRoutes.homeRoute,
+                  );
+                },
+                icon: Icons.home,
+              ),
+              GButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, MyRoutes.searchRoute);
+                },
+                icon: Icons.search,
+              ),
+              GButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, MyRoutes.postRoute);
+                },
+                icon: Icons.post_add,
+              ),
+              GButton(
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    MyRoutes.orgRoute,
+                  );
+                },
+                icon: Icons.school,
+              ),
             ],
           ),
         ),
