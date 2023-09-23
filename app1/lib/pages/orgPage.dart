@@ -136,7 +136,9 @@ class _orgLoginState extends State<orgLogin> {
                   children: [
                     Text("login as a Admin :"),
                     TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, MyRoutes.adminRoute);
+                        },
                         child: Text(
                           "Admin Login",
                           style: TextStyle(fontSize: 15),

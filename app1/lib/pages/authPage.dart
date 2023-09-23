@@ -4,25 +4,22 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:app1/pages/signup_page.dart';
 
-
-
 class AuthPage extends StatelessWidget {
-  const AuthPage({super.key});
+  const AuthPage({Key? key});
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       body: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (BuildContext context, AsyncSnapshot<User?> snapshot){
-          if(snapshot.connectionState == ConnectionState.waiting){
+        builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const CircularProgressIndicator();
-          } else{
-            if(snapshot.hasData){
-            return AuthPage();
-    }
-            else{
-              return const LoginPage();
+          } else {
+            if (snapshot.hasData) {
+              return HomePage(); // Navigate to the HomePage for authenticated users.
+            } else {
+              return LoginPage(); // Navigate to the LoginPage for unauthenticated users.
             }
           }
         },

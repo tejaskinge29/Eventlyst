@@ -1,157 +1,133 @@
-import 'package:app1/utils/routes.dart';
-import 'package:flutter/material.dart';
+login code
+ try {
+      setState(() {
+        isLoading = true;
+      });
 
-class SignupPage extends StatelessWidget {
-  const SignupPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      child: GestureDetector(
-        onTap: () {
-          // Hide the keyboard when tapping outside of the input fields
-          FocusScope.of(context).unfocus();
-        },
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: MediaQuery.of(context).size.height * 0.12),
-              Text(
-                "SIGN UP",
-                style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width * 0.08,
-                  fontWeight: FontWeight.w300,
-                  // height: 6,
-                ),
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.01,
-              ),
-              Text(
-                "Lets Get Started !",
-                style: TextStyle(
-                  fontWeight: FontWeight.w800,
-                  fontSize: MediaQuery.of(context).size.width * 0.05,
-                  // fontSize: 25,
-                ),
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-              Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: MediaQuery.of(context).size.height * 0.01,
-                      horizontal: MediaQuery.of(context).size.width * 0.1),
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        decoration: InputDecoration(
-                          hintText: "Enter Your Full Name",
-                          labelText: "Name",
-                        ),
-                      ),
-                    ],
-                  )),
-              // SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-              Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: MediaQuery.of(context).size.height * 0.01,
-                      horizontal: MediaQuery.of(context).size.width * 0.1),
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        decoration: InputDecoration(
-                          hintText: "Enter Your Username",
-                          labelText: "Username",
-                        ),
-                      ),
-                    ],
-                  )),
-              Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: MediaQuery.of(context).size.height * 0.01,
-                      horizontal: MediaQuery.of(context).size.width * 0.1),
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        decoration: InputDecoration(
-                          hintText: "Enter Your Email ID",
-                          labelText: "Email",
-                        ),
-                      ),
-                    ],
-                  )),
-              Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: MediaQuery.of(context).size.height * 0.01,
-                      horizontal: MediaQuery.of(context).size.width * 0.1),
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        decoration: InputDecoration(
-                          hintText: "Create Password",
-                          labelText: "Password",
-                        ),
-                      ),
-                    ],
-                  )),
-              Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: MediaQuery.of(context).size.height * 0.01,
-                      horizontal: MediaQuery.of(context).size.width * 0.1),
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        decoration: InputDecoration(
-                          hintText: "Your Password",
-                          labelText: "Confirm Password",
-                        ),
-                      ),
-                    ],
-                  )),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.03,
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, MyRoutes.homeRoute);
-                },
-                child: Text("Register"),
-                style: TextButton.styleFrom(
-                  minimumSize: Size(140, 50),
-                  backgroundColor: Colors.black,
-                ),
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-              Text(
-                "or sign up using",
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-              Container(
-                child: Column(
-                  children: [
-                    Image.asset(
-                      "assets/images/google.png",
-                      height: MediaQuery.of(context).size.height * 0.045,
-                      width: MediaQuery.of(context).size.width * 0.12,
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                  child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Already have an account ?"),
-                  TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, MyRoutes.loginRoute);
-                      },
-                      child: Text("Login.")),
-                ],
-              ))
-            ],
+      final userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _email.text,
+        password: _password.text,
+      );
+      final user = userCredential.user;
+      setState(() {
+        isLoading = false;
+      });
+      if (user != null) {
+        // User is logged in, navigate to the home page
+        Navigator.pushNamed(context, MyRoutes.homeRoute);
+      } else {
+        // User is not found in Firebase Authentication
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("No user found for that email."),
           ),
-        ),
-      ),
-    );
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      // Redirect to the home page
+      Navigator.pushNamed(context, MyRoutes.homeRoute);
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      // Handling password matching
+      if (e.code == 'user-not-found') {
+        return ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("No user found for that email."),
+          ),
+        );
+      } else if (e.code == 'wrong-password') {
+        return ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Wrong password provided for that user."),
+          ),
+        );
+      }
+    }
   }
-}
+
+
+  ==>  not working the login button  <==
+
+   try {
+      setState(() {
+        isLoading = true;
+      });
+
+      final String email = _email.text.trim();
+      final String password = _password.text.trim();
+
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      if (userCredential.user != null) {
+        // User logged in successfully.
+
+        // Check if user data exists in Firestore.
+        DocumentSnapshot userData = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .get();
+
+        if (userData.exists) {
+          // User data exists in Firestore.
+          Map<String, dynamic> userDataMap =
+              userData.data() as Map<String, dynamic>;
+
+          // Access user data fields, e.g., userDataMap['name'], userDataMap['username'], etc.
+
+          setState(() {
+            isLoading = false;
+          });
+
+          // After successful login and data retrieval, navigate to the home page.
+          // Navigator.pushNamed(context, MyRoutes.homeRoute);
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    HomePage()), // Replace with your home page widget
+          );
+        } else {
+          // User data does not exist in Firestore.
+          setState(() {
+            isLoading = false;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("User data not found in Firestore."),
+            ),
+          );
+        }
+      } else {
+        // User does not exist or credentials are incorrect.
+        setState(() {
+          isLoading = false;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                "Invalid credentials. Please check your email and password."),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+
+      // Handle login errors
+      print('Error during login: $e');
+    }
+  }

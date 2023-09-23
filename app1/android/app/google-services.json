@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "116098067723",
+    "project_id": "eventlyst-a3a60",
+    "storage_bucket": "eventlyst-a3a60.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:116098067723:android:a35b519451b59aab4b860e",
+        "android_client_info": {
+          "package_name": "com.example.app1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "116098067723-mecgttl4rqu8k7i4c64k8t9kfauudpv8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJLTCjSAEnWYBUTQ1L9n2-jJfphAPYuv8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "116098067723-mecgttl4rqu8k7i4c64k8t9kfauudpv8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

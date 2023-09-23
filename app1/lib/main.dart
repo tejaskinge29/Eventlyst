@@ -1,3 +1,4 @@
+import 'package:app1/pages/Admin.dart';
 import 'package:app1/pages/Feedback.dart';
 import 'package:app1/pages/bookmark.dart';
 import 'package:app1/pages/home_page.dart';
@@ -12,10 +13,17 @@ import 'package:app1/pages/seacrh1.dart';
 import 'package:app1/pages/settings.dart';
 import 'package:app1/utils/routes.dart';
 import 'package:app1/pages/signup_page.dart';
+import 'package:app1/pages/authPage.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:app1/firebase_options.dart';
 // import 'package:app1/pages/profile.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MyApp());
 }
 
@@ -40,6 +48,8 @@ class MyApp extends StatelessWidget {
         MyRoutes.FeedbackRoute: (context) => Myfeedback(),
         MyRoutes.searchRoute: (context) => Search_Page(),
         MyRoutes.profileRoute: (context) => ProfilePage(),
+        MyRoutes.adminRoute: (context) => Myadmin(),
+        // MyRoutes.Orghome1Route: (context) => ProfilePage(),
       },
     );
   }

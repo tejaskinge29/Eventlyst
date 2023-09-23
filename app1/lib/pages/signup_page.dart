@@ -1,27 +1,91 @@
-import 'package:app1/utils/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:app1/utils/routes.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // to store data in firestore
+import 'package:app1/pages/auth_service/auth_service.dart';
 
-class SignupPage extends StatelessWidget {
+class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
 
   @override
+  State<SignupPage> createState() => _SignupPageState();
+}
+
+class _SignupPageState extends State<SignupPage> {
+  final _formKey = GlobalKey<FormState>();
+  bool isLoading = false;
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _password = TextEditingController();
+  final TextEditingController _name = TextEditingController();
+  final TextEditingController _username = TextEditingController();
+
+  createUserWithEmailAndPassword() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      final String email = _email.text.trim();
+      final String password = _password.text.trim();
+
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      if (userCredential.user != null) {
+        // User registered successfully with Firebase Authentication.
+
+        // Store user data in Firestore.
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .set({
+          'name': _name.text,
+          'username': _username.text,
+          'email': email,
+          // Add other user data fields as needed.
+        });
+
+        setState(() {
+          isLoading = false;
+        });
+
+        // After successful registration, navigate to the home page.
+        Navigator.pushNamed(context, MyRoutes.homeRoute);
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+
+      // Handle registration errors
+      print('Error during registration: $e');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    AuthService authService = AuthService();
     return Scaffold(
-      // child: GestureDetector(
-      //   onTap: () {
-      //     // Hide the keyboard when tapping outside of the input fields
-      //     FocusScope.of(context).unfocus();
-      //   },
       body: SingleChildScrollView(
         child: Column(
+          // mainAxisAlignment: MainAxisAlignment.center,
+          // children: [
+          // child: Padding(
+          //   padding: const EdgeInsets.all(20.0),
+          //   child: Form(
+          //     key: _formKey,
+          //     child: OverflowBar(
+          //       overflowAlignment: OverflowBarAlignment.center,
           children: [
             SizedBox(height: MediaQuery.of(context).size.height * 0.12),
             Text(
-              "SIGN UP",
+              "SIGNUP",
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width * 0.08,
                 fontWeight: FontWeight.w300,
-                // height: 6,
               ),
             ),
             SizedBox(
@@ -32,91 +96,99 @@ class SignupPage extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.w800,
                 fontSize: MediaQuery.of(context).size.width * 0.05,
-                // fontSize: 25,
               ),
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.01),
             Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: MediaQuery.of(context).size.height * 0.01,
-                    horizontal: MediaQuery.of(context).size.width * 0.1),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
+              child: Form(
+                key: _formKey,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextFormField(
+                      controller: _name,
+                      validator: (text) {
+                        if (text == null || text.isEmpty) {
+                          return "email is empty";
+                        }
+                        return null;
+                      },
                       decoration: InputDecoration(
-                        hintText: "Enter Your Full Name",
-                        labelText: "Name",
+                        hintText: "Enter Name",
+                        labelText: "Full Name",
                       ),
                     ),
-                  ],
-                )),
-            // SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-            Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: MediaQuery.of(context).size.height * 0.01,
-                    horizontal: MediaQuery.of(context).size.width * 0.1),
-                child: Column(
-                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                     TextFormField(
+                      controller: _username,
+                      validator: (text) {
+                        if (text == null || text.isEmpty) {
+                          return "Username is empty";
+                        }
+                        return null;
+                      },
                       decoration: InputDecoration(
-                        hintText: "Enter Your Username",
+                        hintText: "Enter Username",
                         labelText: "Username",
                       ),
                     ),
-                  ],
-                )),
-            Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: MediaQuery.of(context).size.height * 0.01,
-                    horizontal: MediaQuery.of(context).size.width * 0.1),
-                child: Column(
-                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                     TextFormField(
+                      controller: _email,
+                      validator: (text) {
+                        if (text == null || text.isEmpty) {
+                          return "Email is empty";
+                        }
+                        return null;
+                      },
                       decoration: InputDecoration(
-                        hintText: "Enter Your Email ID",
+                        hintText: "Enter Email",
                         labelText: "Email",
                       ),
                     ),
-                  ],
-                )),
-            Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: MediaQuery.of(context).size.height * 0.01,
-                    horizontal: MediaQuery.of(context).size.width * 0.1),
-                child: Column(
-                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                     TextFormField(
-                      obscureText: true,
+                      controller: _password,
+                      validator: (text) {
+                        if (text == null || text.isEmpty) {
+                          return "Password is empty";
+                        }
+                        return null;
+                      },
                       decoration: InputDecoration(
-                        hintText: "Create Password",
+                        hintText: "Enter Password",
                         labelText: "Password",
                       ),
-                    ),
-                  ],
-                )),
-            Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: MediaQuery.of(context).size.height * 0.01,
-                    horizontal: MediaQuery.of(context).size.width * 0.1),
-                child: Column(
-                  children: [
-                    TextFormField(
                       obscureText: true,
-                      decoration: InputDecoration(
-                        hintText: "Your Password",
-                        labelText: "Confirm Password",
-                      ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.02,
+                    ),
+                    TextButton(
+                        onPressed: () {}, child: Text("forget password ?")),
+                    SizedBox(
+                      height: 20,
                     ),
                   ],
-                )),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.03,
+                ),
+              ),
             ),
             ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, MyRoutes.homeRoute);
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  await createUserWithEmailAndPassword();
+
+                  // After successful registration, navigate to the home page
+                  Navigator.pushNamed(context, MyRoutes.homeRoute);
+                }
               },
-              child: Text("Register"),
+              child: isLoading
+                  ? CircularProgressIndicator(
+                      color: Colors.white,
+                    )
+                  : const Text("Register"),
               style: TextButton.styleFrom(
                 minimumSize: Size(140, 50),
                 backgroundColor: Colors.black,
@@ -124,20 +196,27 @@ class SignupPage extends StatelessWidget {
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.01),
             Text(
-              "or sign up using",
+              "or Sign up using",
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             Container(
               child: Column(
                 children: [
-                  Image.asset(
-                    "assets/images/google.png",
-                    height: MediaQuery.of(context).size.height * 0.045,
-                    width: MediaQuery.of(context).size.width * 0.12,
-                  ),
+                  IconButton(
+                    icon: Image.asset(
+                      'assets/images/google.png',
+                      height: MediaQuery.of(context).size.height * 0.045,
+                      width: MediaQuery.of(context).size.width * 0.12,
+                    ),
+                    // iconSize: 50,
+                    onPressed: authService.handleSignIn,
+                  )
                 ],
               ),
             ),
+            // SizedBox(
+            //   height: 15,
+            // ),
             Container(
                 child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -147,10 +226,11 @@ class SignupPage extends StatelessWidget {
                     onPressed: () {
                       Navigator.pushNamed(context, MyRoutes.loginRoute);
                     },
-                    child: Text("Login.")),
+                    child: Text("Log In")),
               ],
             ))
           ],
+          // ),
         ),
       ),
     );

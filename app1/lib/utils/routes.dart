@@ -2,7 +2,7 @@ class MyRoutes {
   static String loginRoute = "/login";
   static String signupRoute = "/signup";
   static String homeRoute = "/home";
-  static String orgRoute = "/organisation login";
+  static String orgRoute = "/organisationlogin";
   static String orghomeRoute = "/orghome";
   static String postRoute = "/post";
   static String remRoute = "/reminder";
@@ -11,4 +11,5 @@ class MyRoutes {
   static String BookmarkRoute = "/Bookmark";
   static String searchRoute = "/Search";
   static String profileRoute = "/profile";
+  static String adminRoute = "/admin";
 }

@@ -5,6 +5,7 @@ import 'package:app1/utils/routes.dart';
 import 'package:app1/widdget/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:app1/pages/post.dart';
 
 import 'bnav.dart';
 
@@ -45,6 +46,17 @@ class HomePage extends StatelessWidget {
             ),
           ),
         ),
+
+        // Post Interface
+        body: Center(
+          child: Column(
+            children: [
+              SizedBox(height: 20.0),
+              MyPost(),
+            ],
+          ),
+        ),
+        // Navigation bar
         bottomNavigationBar: Container(
           height: (MediaQuery.of(context).size.height * 0.1),
           color: Colors.black,
