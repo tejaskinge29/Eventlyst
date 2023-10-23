@@ -1,133 +1,143 @@
-login code
- try {
-      setState(() {
-        isLoading = true;
-      });
+import 'package:Eventlyst/pages/My_Drawer_List.dart';
+import 'package:Eventlyst/pages/My_Drawer_Header.dart';
+import 'package:Eventlyst/pages/post_page.dart';
+import 'package:Eventlyst/utils/routes.dart';
+import 'package:Eventlyst/widdget/drawer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:Eventlyst/pages/post.dart';
 
-      final userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _email.text,
-        password: _password.text,
-      );
-      final user = userCredential.user;
+// import 'bnav.dart';
+
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key});
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String username = ''; // Initialize with an empty string
+  String email = ''; // Initialize with an empty string
+  // Retrieve user data from arguments
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    // Retrieve user data from arguments
+    final Map<String, dynamic>? args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+
+    if (args != null) {
+      final DocumentSnapshot userDoc = args['userDoc'];
       setState(() {
-        isLoading = false;
+        username = userDoc['username'];
+        email = userDoc['email'];
       });
-      if (user != null) {
-        // User is logged in, navigate to the home page
-        Navigator.pushNamed(context, MyRoutes.homeRoute);
-      } else {
-        // User is not found in Firebase Authentication
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("No user found for that email."),
-          ),
-        );
-      }
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      // Redirect to the home page
-      Navigator.pushNamed(context, MyRoutes.homeRoute);
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      // Handling password matching
-      if (e.code == 'user-not-found') {
-        return ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("No user found for that email."),
-          ),
-        );
-      } else if (e.code == 'wrong-password') {
-        return ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Wrong password provided for that user."),
-          ),
-        );
-      }
     }
   }
 
-
-  ==>  not working the login button  <==
-
-   try {
-      setState(() {
-        isLoading = true;
-      });
-
-      final String email = _email.text.trim();
-      final String password = _password.text.trim();
-
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      if (userCredential.user != null) {
-        // User logged in successfully.
-
-        // Check if user data exists in Firestore.
-        DocumentSnapshot userData = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userCredential.user!.uid)
-            .get();
-
-        if (userData.exists) {
-          // User data exists in Firestore.
-          Map<String, dynamic> userDataMap =
-              userData.data() as Map<String, dynamic>;
-
-          // Access user data fields, e.g., userDataMap['name'], userDataMap['username'], etc.
-
-          setState(() {
-            isLoading = false;
-          });
-
-          // After successful login and data retrieval, navigate to the home page.
-          // Navigator.pushNamed(context, MyRoutes.homeRoute);
-
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    HomePage()), // Replace with your home page widget
-          );
-        } else {
-          // User data does not exist in Firestore.
-          setState(() {
-            isLoading = false;
-          });
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("User data not found in Firestore."),
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        // Handle back button press as needed
+        // Return 'true' to allow the back navigation, or 'false' to block it
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          title: const Text("Eventlyst"),
+          actions: <Widget>[
+            IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, MyRoutes.remRoute);
+              },
+              icon: const Icon(Icons.notifications_none_sharp),
             ),
-          );
-        }
-      } else {
-        // User does not exist or credentials are incorrect.
-        setState(() {
-          isLoading = false;
-        });
+          ],
+        ),
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-                "Invalid credentials. Please check your email and password."),
+        drawer: Drawer(
+          child: SingleChildScrollView(
+            child: Container(
+              child: Column(
+                children: [
+                  MyHeaderDrawer(
+                      username: username,
+                      email: email), // Pass username and email
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.45),
+                  MyDrawerList(),
+                ],
+              ),
+            ),
           ),
-        );
-      }
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
+        ),
 
-      // Handle login errors
-      print('Error during login: $e');
-    }
+        // Post Interface
+        body: Center(
+          child: Column(
+            children: [
+              //SizedBox(height: 20.0),
+              Text("Username: $username"),
+              Text("Email: $email"),
+              MyPost(),
+            ],
+          ),
+        ),
+        // Navigation bar
+        bottomNavigationBar: Container(
+          height: (MediaQuery.of(context).size.height * 0.1),
+          color: Colors.black,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: GNav(
+              gap: 12,
+              // backgroundColor: Colors.black,
+              color: Colors.white,
+              activeColor: Colors.white,
+              tabBackgroundColor: Colors.black,
+              tabs: [
+                GButton(
+                  onPressed: () {
+                    Navigator.pushNamed(
+                      context,
+                      MyRoutes.homeRoute,
+                    );
+                  },
+                  icon: Icons.home,
+                ),
+                GButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, MyRoutes.searchRoute);
+                  },
+                  icon: Icons.search,
+                ),
+                GButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, MyRoutes.postRoute);
+                  },
+                  icon: Icons.post_add,
+                ),
+                GButton(
+                  onPressed: () {
+                    Navigator.pushNamed(
+                      context,
+                      MyRoutes.orgRoute,
+                    );
+                  },
+                  icon: Icons.school,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
+}

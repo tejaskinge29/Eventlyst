@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:app1/utils/routes.dart';
+import 'package:Eventlyst/utils/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // to store data in firestore
-import 'package:app1/pages/auth_service/auth_service.dart';
+import 'package:Eventlyst/pages/auth_service/auth_service.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -18,6 +18,7 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController _password = TextEditingController();
   final TextEditingController _name = TextEditingController();
   final TextEditingController _username = TextEditingController();
+  bool passToggle = true;
 
   createUserWithEmailAndPassword() async {
     try {
@@ -111,7 +112,7 @@ class _SignupPageState extends State<SignupPage> {
                       controller: _name,
                       validator: (text) {
                         if (text == null || text.isEmpty) {
-                          return "email is empty";
+                          return "Full name is empty";
                         }
                         return null;
                       },
@@ -120,7 +121,7 @@ class _SignupPageState extends State<SignupPage> {
                         labelText: "Full Name",
                       ),
                     ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     TextFormField(
                       controller: _username,
                       validator: (text) {
@@ -134,7 +135,7 @@ class _SignupPageState extends State<SignupPage> {
                         labelText: "Username",
                       ),
                     ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     TextFormField(
                       controller: _email,
                       validator: (text) {
@@ -148,9 +149,11 @@ class _SignupPageState extends State<SignupPage> {
                         labelText: "Email",
                       ),
                     ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                     TextFormField(
+                      keyboardType: TextInputType.visiblePassword,
                       controller: _password,
+                      obscureText: passToggle,
                       validator: (text) {
                         if (text == null || text.isEmpty) {
                           return "Password is empty";
@@ -160,16 +163,26 @@ class _SignupPageState extends State<SignupPage> {
                       decoration: InputDecoration(
                         hintText: "Enter Password",
                         labelText: "Password",
+                        suffix: InkWell(
+                          onTap: () {
+                            setState(() {
+                              passToggle = !passToggle;
+                            });
+                          },
+                          child: Icon(passToggle
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                        ),
                       ),
-                      obscureText: true,
+                      // obscureText: true,
                     ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.02,
-                    ),
+                    // SizedBox(
+                    //   height: MediaQuery.of(context).size.height * 0.00,
+                    // ),
                     TextButton(
                         onPressed: () {}, child: Text("forget password ?")),
                     SizedBox(
-                      height: 20,
+                      height: MediaQuery.of(context).size.height * 0.01,
                     ),
                   ],
                 ),
@@ -209,7 +222,7 @@ class _SignupPageState extends State<SignupPage> {
                       width: MediaQuery.of(context).size.width * 0.12,
                     ),
                     // iconSize: 50,
-                    onPressed: authService.handleSignIn,
+                    onPressed: authService.signInWithGoogle,
                   )
                 ],
               ),

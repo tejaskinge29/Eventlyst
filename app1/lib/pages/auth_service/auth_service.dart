@@ -1,24 +1,58 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignin = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  Future<void> handleSignIn() async {
+  Future<User?> signInWithGoogle() async {
     try {
-      GoogleSignInAccount? googleUser = await _googleSignin.signIn();
-      if (googleUser != null) {
-        GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-        AuthCredential credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
-        await _auth.signInWithCredential(credential);
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser!.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      final UserCredential authResult =
+          await _auth.signInWithCredential(credential);
+
+      final User? user = authResult.user;
+
+      if (user != null) {
+        // User signed in successfully, now store user data in Firestore
+        await storeUserDataInFirestore(user);
+
+        return user;
+      } else {
+        return null;
       }
-    } catch (e) {
-      print("Error $e");
+    } catch (error) {
+      print('Google Sign-In Error: $error');
+      return null;
+    }
+  }
+
+  Future<void> storeUserDataInFirestore(User user) async {
+    try {
+      // Create a reference to the Firestore collection where user data will be stored
+      CollectionReference users =
+          FirebaseFirestore.instance.collection('users');
+
+      // Check if the user already exists in Firestore
+      DocumentSnapshot userData = await users.doc(user.uid).get();
+      if (!userData.exists) {
+        // If the user doesn't exist, create a new document in the 'users' collection
+        await users.doc(user.uid).set({
+          'displayName': user.displayName,
+          'email': user.email,
+          'photoURL': user.photoURL,
+          // Add any additional user data fields you want to store
+        });
+      }
+    } catch (error) {
+      print('Error storing user data in Firestore: $error');
     }
   }
 }

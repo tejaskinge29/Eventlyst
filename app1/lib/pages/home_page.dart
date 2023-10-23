@@ -1,16 +1,45 @@
-import 'package:app1/pages/My_Drawer_List.dart';
-import 'package:app1/pages/My_Drawer_Header.dart';
-import 'package:app1/pages/post_page.dart';
-import 'package:app1/utils/routes.dart';
-import 'package:app1/widdget/drawer.dart';
+import 'package:Eventlyst/pages/My_Drawer_List.dart';
+import 'package:Eventlyst/pages/My_Drawer_Header.dart';
+import 'package:Eventlyst/pages/post_page.dart';
+import 'package:Eventlyst/utils/routes.dart';
+import 'package:Eventlyst/widdget/drawer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:app1/pages/post.dart';
+import 'package:Eventlyst/pages/post.dart';
 
-import 'bnav.dart';
+// import 'bnav.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key});
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String username = ''; // Initialize with an empty string
+  String email = ''; // Initialize with an empty string
+  // Retrieve user data from arguments
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    // Retrieve user data from arguments
+    final Map<String, dynamic>? args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+
+    if (args != null) {
+      final DocumentSnapshot userDoc = args['userDoc'];
+      setState(() {
+        username = userDoc['username'];
+        email = userDoc['email'];
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +62,13 @@ class HomePage extends StatelessWidget {
             ),
           ],
         ),
+
         drawer: Drawer(
           child: SingleChildScrollView(
             child: Container(
               child: Column(
                 children: [
-                  MyHeaderDrawer(),
+                  MyHeaderDrawer(), // Pass username and email
                   SizedBox(height: MediaQuery.of(context).size.height * 0.45),
                   MyDrawerList(),
                 ],
@@ -51,7 +81,9 @@ class HomePage extends StatelessWidget {
         body: Center(
           child: Column(
             children: [
-              SizedBox(height: 20.0),
+              //SizedBox(height: 20.0),
+              Text("Username: $username"),
+              Text("Email: $email"),
               MyPost(),
             ],
           ),

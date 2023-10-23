@@ -1,4 +1,4 @@
-name: app1
+name: Eventlyst
 description: A new Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -39,10 +39,23 @@ dependencies:
   google_sign_in: ^6.1.5
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.13.1
   flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
 
+flutter_launcher_icons:
+
+   android: true
+   ios: false
+   remove_alpha_ios: true
+   image_path: "assets/images/intro.png"
+   min_sdk_android: 21 
+  #  web:
+  #     generate: true
+  #     image_path: "assets/icon/app_logo.png"
+  #     background_color: "#hexcode"
+  #     theme_color: "#hexcode"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter packages.
@@ -54,8 +67,10 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
+   
   assets:
     - assets/images/
+    - assets/images/123.png
     - assets/images/google.png
     - assets/images/profile.png
     - assets/images/profilew.png
@@ -65,6 +80,8 @@ flutter:
     - assets/images/home.png
     - assets/images/file.png
     - assets/images/search.png
+    - assets/images/intro.png
+    - assets/images/design.jpg
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

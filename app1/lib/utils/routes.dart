@@ -1,3 +1,5 @@
+import 'package:flutter/src/widgets/framework.dart';
+
 class MyRoutes {
   static String loginRoute = "/login";
   static String signupRoute = "/signup";
@@ -12,4 +14,6 @@ class MyRoutes {
   static String searchRoute = "/Search";
   static String profileRoute = "/profile";
   static String adminRoute = "/admin";
+
+  static of(BuildContext context) {}
 }

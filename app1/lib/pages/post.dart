@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:app1/utils/routes.dart';
+import 'package:Eventlyst/utils/routes.dart';
 
 class MyPost extends StatefulWidget {
   const MyPost({super.key});
@@ -11,29 +11,153 @@ class MyPost extends StatefulWidget {
 class _MyPostState extends State<MyPost> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: (MediaQuery.of(context).size.width * 0.9),
-      height: (MediaQuery.of(context).size.height * 0.5),
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.black,
-          width: 5.0,
-          style: BorderStyle.solid,
+    double screenWidth = MediaQuery.of(context).size.width;
+    return Center(
+      child: Container(
+        color: Colors.white,
+        width:
+            screenWidth > 600 ? 600 : double.infinity, // Max width for tablets
+        margin: EdgeInsets.all(20),
+        child: Column(
+          children: [
+            Container(
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        child: Image.asset(
+                          "assets/images/profile.png",
+                          width: screenWidth > 600
+                              ? 70
+                              : 35, // Increase size for tablets
+                          height: screenWidth > 600 ? 70 : 35,
+                        ),
+                        radius: 20,
+                      ),
+                      SizedBox(width: screenWidth > 600 ? 16 : 8),
+                      Expanded(
+                        child: Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'UserName',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: screenWidth > 600 ? 24 : 16),
+                              ),
+                              Text(
+                                '04 April',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: screenWidth > 600 ? 14 : 10),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: screenWidth > 600 ? 16 : 10),
+                      IconButton(
+                        iconSize: screenWidth > 600
+                            ? 40
+                            : 30, // Increase icon size for tablets
+                        color: Colors.yellow,
+                        icon: const Icon(Icons.star_border_outlined),
+                        onPressed: () {
+                          // ...
+                        },
+                      ),
+                    ],
+                  ),
+                  // Add another Row here
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.fiber_manual_record,
+                        color: Colors.yellow,
+                        size: screenWidth > 600
+                            ? 24
+                            : 20, // Increase size for tablets
+                      ),
+                      SizedBox(width: screenWidth > 600 ? 16 : 8),
+                      Text(
+                        'Music Concert',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: screenWidth > 600 ? 28 : 20),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              height: 200,
+              width: double.infinity,
+              child: Image.asset(
+                "assets/images/design.jpg",
+                fit: BoxFit.cover,
+              ),
+            ),
+            SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    child: Row(
+                      children: [
+                        Text(
+                          'Get ready for the most awaited music event.',
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: screenWidth > 600 ? 18 : 15),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    margin: EdgeInsets.all(5),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Free : Free',
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: screenWidth > 600 ? 18 : 15),
+                        ),
+                        SizedBox(
+                            width: screenWidth > 600
+                                ? 150.0
+                                : 100.0), // Adjust the spacing
+                        ElevatedButton.icon(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.bookmark_add_outlined,
+                            size: screenWidth > 600
+                                ? 24
+                                : 15, // Increase icon size for tablets
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size(screenWidth > 600 ? 180 : 135,
+                                30), // Adjust the button size
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          label: Text('Register now'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-        borderRadius: BorderRadius.all(
-          Radius.circular(20.0),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Image.asset(
-            "assets/images/profile.png",
-            width: 50,
-            height: 50,
-          ),
-          Text("UserName"),
-        ],
       ),
     );
   }
