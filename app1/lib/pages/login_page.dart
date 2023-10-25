@@ -167,7 +167,8 @@ class _LoginPageState extends State<LoginPage> {
 
                       if (userDoc.exists) {
                         // User data found in Firestore, you can access it like userDoc['fieldName']
-                        // Example: String username = userDoc['username'];
+                        // Example:
+                        // String username = userDoc['username'];
                         print('Username: ${userDoc['username']}');
                         print('Email: ${userDoc['email']}');
                         // Pass user data to the home page

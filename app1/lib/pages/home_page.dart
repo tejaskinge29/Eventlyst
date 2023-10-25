@@ -43,6 +43,14 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic>? args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+    final DocumentSnapshot? userDoc = args?['userDoc'];
+
+    if (userDoc != null) {
+      // Now, you can access and use the 'userDoc' data in this page.
+      // ...
+    }
     return WillPopScope(
       onWillPop: () async {
         // Handle back button press as needed
@@ -76,16 +84,19 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-
-        // Post Interface
+// Post Interface
         body: Center(
-          child: Column(
-            children: [
-              //SizedBox(height: 20.0),
-              Text("Username: $username"),
-              Text("Email: $email"),
-              MyPost(),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                //SizedBox(height: 20.0),
+                // Text("Username: ${userDoc?.get('username') ?? 'N/A'}"),
+                // Text("Email: ${userDoc?.get('email') ?? 'N/A'}"),
+                MyPost(),
+                SizedBox(height: 1.0),
+                MyPost(),
+              ],
+            ),
           ),
         ),
         // Navigation bar
