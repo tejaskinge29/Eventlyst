@@ -9,6 +9,7 @@ class MyPost extends StatefulWidget {
 }
 
 class _MyPostState extends State<MyPost> {
+  bool isStarFilled = false;
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -59,13 +60,15 @@ class _MyPostState extends State<MyPost> {
                       ),
                       SizedBox(width: screenWidth > 600 ? 16 : 10),
                       IconButton(
-                        iconSize: screenWidth > 600
-                            ? 40
-                            : 30, // Increase icon size for tablets
+                        iconSize: screenWidth > 600 ? 40 : 30,
                         color: Colors.yellow,
-                        icon: const Icon(Icons.star_border_outlined),
+                        icon: isStarFilled
+                            ? Icon(Icons.star, color: Colors.yellow)
+                            : Icon(Icons.star_border_outlined),
                         onPressed: () {
-                          // ...
+                          setState(() {
+                            isStarFilled = !isStarFilled;
+                          });
                         },
                       ),
                     ],
@@ -101,20 +104,28 @@ class _MyPostState extends State<MyPost> {
               ),
             ),
             SizedBox(height: 8),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+              child: Text(
+                'Greetings from Department of Electronics & Telecommunication Engineering,......',
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
             Container(
               width: double.infinity,
+              // Set the desired height
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
                     child: Row(
                       children: [
-                        Text(
-                          'Get ready for the most awaited music event.',
-                          style: TextStyle(
-                              fontWeight: FontWeight.normal,
-                              fontSize: screenWidth > 600 ? 18 : 15),
-                        ),
+                        // Text(
+                        //   'Greetings from Department of Electronics ...',
+                        //   style: TextStyle(
+                        //       fontWeight: FontWeight.normal,
+                        //       fontSize: screenWidth > 600 ? 18 : 15),
+                        // ),
                       ],
                     ),
                   ),
@@ -134,7 +145,10 @@ class _MyPostState extends State<MyPost> {
                                 ? 150.0
                                 : 100.0), // Adjust the spacing
                         ElevatedButton.icon(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(
+                                context, MyRoutes.showpostRoute);
+                          },
                           icon: Icon(
                             Icons.bookmark_add_outlined,
                             size: screenWidth > 600

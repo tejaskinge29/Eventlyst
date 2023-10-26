@@ -7,7 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:Eventlyst/pages/post.dart';
-
+import 'package:badges/badges.dart';
 // import 'bnav.dart';
 
 class HomePage extends StatefulWidget {
@@ -64,9 +64,38 @@ class _HomePageState extends State<HomePage> {
           actions: <Widget>[
             IconButton(
               onPressed: () {
+                // Handle the notification action, e.g., navigating to a notifications page.
                 Navigator.pushNamed(context, MyRoutes.remRoute);
               },
-              icon: const Icon(Icons.notifications_none_sharp),
+              icon: Stack(
+                children: [
+                  Icon(Icons.notifications_none_sharp),
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Container(
+                      padding: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Center(
+                        child: Text(
+                          '1', // Replace with your message or notification count
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

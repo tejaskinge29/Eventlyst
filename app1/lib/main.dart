@@ -13,6 +13,7 @@ import 'package:Eventlyst/pages/seacrh1.dart';
 import 'package:Eventlyst/pages/settings.dart';
 import 'package:Eventlyst/utils/routes.dart';
 import 'package:Eventlyst/pages/signup_page.dart';
+import 'package:Eventlyst/pages/showpost.dart';
 import 'package:Eventlyst/pages/authPage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         MyRoutes.searchRoute: (context) => Search_Page(),
         MyRoutes.profileRoute: (context) => ProfilePage(),
         MyRoutes.adminRoute: (context) => Myadmin(),
+        MyRoutes.showpostRoute: (context) => showpost(),
         // MyRoutes.Orghome1Route: (context) => ProfilePage(),
       },
     );
