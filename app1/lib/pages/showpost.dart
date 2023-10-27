@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:Eventlyst/utils/routes.dart';
+import 'package:provider/provider.dart';
+import 'package:Eventlyst/pages/notification_provider.dart';
 
 class showpost extends StatelessWidget {
   @override
@@ -117,6 +119,8 @@ class showpost extends StatelessWidget {
               padding: EdgeInsets.all(20),
               child: ElevatedButton(
                 onPressed: () {
+                  Provider.of<NotificationProvider>(context, listen: false)
+                      .addNotification();
                   _showRegisterDialog(context);
                 },
                 child: Text('Register now'),
@@ -194,5 +198,16 @@ class showpost extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class NotificationProvider extends ChangeNotifier {
+  int _notificationCount = 0;
+
+  int get notificationCount => _notificationCount;
+
+  void addNotification() {
+    _notificationCount++;
+    notifyListeners();
   }
 }

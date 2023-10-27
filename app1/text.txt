@@ -1,140 +1,259 @@
-import 'package:Eventlyst/pages/My_Drawer_List.dart';
-import 'package:Eventlyst/pages/My_Drawer_Header.dart';
-import 'package:Eventlyst/pages/post_page.dart';
-import 'package:Eventlyst/utils/routes.dart';
-import 'package:Eventlyst/widdget/drawer.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:Eventlyst/utils/routes.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:Eventlyst/pages/post.dart';
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart';
 
-// import 'bnav.dart';
-
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key});
+class Mypost extends StatefulWidget {
+  const Mypost({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  State<Mypost> createState() => _MypostState();
 }
 
-class _HomePageState extends State<HomePage> {
-  String username = ''; // Initialize with an empty string
-  String email = ''; // Initialize with an empty string
-  // Retrieve user data from arguments
-  @override
-  void initState() {
-    super.initState();
-    fetchUserData();
-  }
+class _MypostState extends State<Mypost> {
+  XFile? _imageFile;
+  // File? _imageFile;
+// Function to pick an image from gallery
+  void _pickImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
 
-  Future<void> fetchUserData() async {
-    // Retrieve user data from arguments
-    final Map<String, dynamic>? args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
-
-    if (args != null) {
-      final DocumentSnapshot userDoc = args['userDoc'];
+    if (pickedFile != null) {
       setState(() {
-        username = userDoc['username'];
-        email = userDoc['email'];
+        _imageFile = pickedFile; // Assign the XFile directly
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        // Handle back button press as needed
-        // Return 'true' to allow the back navigation, or 'false' to block it
-        return false;
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          title: const Text("Eventlyst"),
-          actions: <Widget>[
-            IconButton(
-              onPressed: () {
-                Navigator.pushNamed(context, MyRoutes.remRoute);
-              },
-              icon: const Icon(Icons.notifications_none_sharp),
-            ),
-          ],
-        ),
-
-        drawer: Drawer(
-          child: SingleChildScrollView(
-            child: Container(
-              child: Column(
-                children: [
-                  MyHeaderDrawer(
-                      username: username,
-                      email: email), // Pass username and email
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.45),
-                  MyDrawerList(),
-                ],
-              ),
-            ),
-          ),
-        ),
-
-        // Post Interface
-        body: Center(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Post"),
+        backgroundColor: Colors.black,
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
           child: Column(
             children: [
-              //SizedBox(height: 20.0),
-              Text("Username: $username"),
-              Text("Email: $email"),
-              MyPost(),
+              Align(
+                alignment: AlignmentDirectional(-1.00, 0.00),
+                child: Text(
+                  'Event Title',
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.01,
+              ),
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Enter event title',
+                  border: OutlineInputBorder(
+                    // Customize the border size here
+                    borderRadius: BorderRadius.circular(12.0), // Border radius
+                    borderSide: BorderSide(
+                      color: Colors.black, // Border color
+                      width: 1.0, // Border width
+                    ),
+                  ),
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                ),
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.02,
+              ),
+              Align(
+                alignment: AlignmentDirectional(-1.00, 0.00),
+                child: Text(
+                  'Event Description',
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.01,
+              ),
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Enter event description ',
+                  border: OutlineInputBorder(
+                    // Customize the border size here
+                    borderRadius: BorderRadius.circular(12.0), // Border radius
+                    borderSide: BorderSide(
+                      color: Colors.black, // Border color
+                      width: 1.0, // Border width
+                    ),
+                  ),
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                ),
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.02,
+              ),
+              Align(
+                alignment: AlignmentDirectional(-1.00, 0.00),
+                child: Text(
+                  'Event Venue',
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.01,
+              ),
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Enter a venue ',
+                  border: OutlineInputBorder(
+                    // Customize the border size here
+                    borderRadius: BorderRadius.circular(12.0), // Border radius
+                    borderSide: BorderSide(
+                      color: Colors.black, // Border color
+                      width: 1.0,
+                      // Border width
+                    ),
+                  ),
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                ),
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.02,
+              ),
+              Align(
+                alignment: AlignmentDirectional(-1.00, 0.00),
+                child: Text(
+                  'Select Image',
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              // Image preview
+              if (_imageFile != null)
+                Image.file(
+                  File(_imageFile!
+                      .path), // Use null check operator (!) to access path
+                  height: 200, // Set the desired height
+                  width: 200, // Set the desired width
+                )
+              else
+                Container(), // Hide the image preview if no image is selected
+              ElevatedButton(
+                onPressed: _pickImage,
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      Colors.white), // Set button background color
+                  shape: MaterialStateProperty.all<OutlinedBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          8.0), // Adjust border radius as needed
+                      side: BorderSide(
+                          color: Colors.black,
+                          width: 1.0), // Set border color and width
+                    ),
+                  ),
+                  textStyle: MaterialStateProperty.all<TextStyle>(
+                    TextStyle(
+                        color: Colors
+                            .transparent), // Set text color to transparent
+                  ),
+                ),
+                child: Icon(
+                  Icons.cloud_upload,
+                  color: Colors.black, // Set icon color to black
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.05,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  // Add your login logic here
+                },
+                style: ButtonStyle(
+                  minimumSize: MaterialStateProperty.all<Size>(Size(140, 50)),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Colors.black),
+                ),
+                child: Text(
+                  "POST",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18, // Adjust the font size as needed
+                  ),
+                ),
+              )
             ],
           ),
         ),
-        // Navigation bar
-        bottomNavigationBar: Container(
-          height: (MediaQuery.of(context).size.height * 0.1),
-          color: Colors.black,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: GNav(
-              gap: 12,
-              // backgroundColor: Colors.black,
-              color: Colors.white,
-              activeColor: Colors.white,
-              tabBackgroundColor: Colors.black,
-              tabs: [
-                GButton(
-                  onPressed: () {
-                    Navigator.pushNamed(
-                      context,
-                      MyRoutes.homeRoute,
-                    );
-                  },
-                  icon: Icons.home,
-                ),
-                GButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, MyRoutes.searchRoute);
-                  },
-                  icon: Icons.search,
-                ),
-                GButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, MyRoutes.postRoute);
-                  },
-                  icon: Icons.post_add,
-                ),
-                GButton(
-                  onPressed: () {
-                    Navigator.pushNamed(
-                      context,
-                      MyRoutes.orgRoute,
-                    );
-                  },
-                  icon: Icons.school,
-                ),
-              ],
-            ),
+      ),
+      // Navigation bar
+      bottomNavigationBar: Container(
+        height: (MediaQuery.of(context).size.height * 0.1),
+        color: Colors.black,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: GNav(
+            gap: 12,
+            // backgroundColor: Colors.black,
+            color: Colors.white,
+            activeColor: Colors.white,
+            tabBackgroundColor: Colors.black,
+            tabs: [
+              GButton(
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    MyRoutes.homeRoute,
+                  );
+                },
+                icon: Icons.home,
+              ),
+              GButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, MyRoutes.searchRoute);
+                },
+                icon: Icons.search,
+              ),
+              GButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, MyRoutes.postRoute);
+                },
+                icon: Icons.post_add,
+              ),
+              GButton(
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    MyRoutes.orgRoute,
+                  );
+                },
+                icon: Icons.school,
+              ),
+            ],
           ),
         ),
       ),

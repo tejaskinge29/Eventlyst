@@ -37,6 +37,10 @@ class _SignupPageState extends State<SignupPage> {
 
       if (userCredential.user != null) {
         // User registered successfully with Firebase Authentication.
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .get();
 
         // Store user data in Firestore.
         await FirebaseFirestore.instance
@@ -46,6 +50,7 @@ class _SignupPageState extends State<SignupPage> {
           'name': _name.text,
           'username': _username.text,
           'email': email,
+
           // Add other user data fields as needed.
         });
 
@@ -54,7 +59,14 @@ class _SignupPageState extends State<SignupPage> {
         });
 
         // After successful registration, navigate to the home page.
-        Navigator.pushNamed(context, MyRoutes.homeRoute);
+        Navigator.pushReplacementNamed(
+          context,
+          MyRoutes.homeRoute,
+          arguments: {
+            'userDoc': userDoc,
+            //  userDoc.data() // Pass the user data as a map
+          },
+        );
       }
     } catch (e) {
       setState(() {
