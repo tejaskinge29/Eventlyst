@@ -119,9 +119,12 @@ class showpost extends StatelessWidget {
               padding: EdgeInsets.all(20),
               child: ElevatedButton(
                 onPressed: () {
-                  Provider.of<NotificationProvider>(context, listen: false)
-                      .addNotification();
                   _showRegisterDialog(context);
+
+                  Future.delayed(Duration(seconds: 2), () {
+                    Provider.of<NotificationProvider>(context, listen: false)
+                        .addNotification();
+                  });
                 },
                 child: Text('Register now'),
               ),
