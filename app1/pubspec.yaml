@@ -39,6 +39,7 @@ dependencies:
   games_services: ^3.0.3
   google_nav_bar: ^5.0.6
   google_sign_in: ^6.1.5
+  hooks_riverpod: ^2.4.5
   image_picker: ^1.0.4
   provider: ^6.0.5
 

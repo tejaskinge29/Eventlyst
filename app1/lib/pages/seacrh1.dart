@@ -50,7 +50,7 @@ class Search_Page extends StatelessWidget {
               ),
               GButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, MyRoutes.searchRoute);
+                  
                 },
                 icon: Icons.search,
               ),

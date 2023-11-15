@@ -5,7 +5,6 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path/path.dart';
 
 class Mypost extends StatefulWidget {
   const Mypost({Key? key}) : super(key: key);
@@ -338,9 +337,7 @@ class _MyPostState extends State<Mypost> {
                 icon: Icons.search,
               ),
               GButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, MyRoutes.postRoute);
-                },
+                onPressed: () {},
                 icon: Icons.post_add,
               ),
               GButton(

@@ -7,8 +7,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:Eventlyst/pages/post.dart';
-import 'package:badges/badges.dart';
-import 'package:provider/provider.dart';
+import 'package:badges/badges.dart';    
+import 'package:Eventlyst/user_data_provider.dart';
 // import 'bnav.dart';
 
 class HomePage extends StatefulWidget {
@@ -151,12 +151,7 @@ class _HomePageState extends State<HomePage> {
               tabBackgroundColor: Colors.black,
               tabs: [
                 GButton(
-                  onPressed: () {
-                    Navigator.pushNamed(
-                      context,
-                      MyRoutes.homeRoute,
-                    );
-                  },
+                  onPressed: () {},
                   icon: Icons.home,
                 ),
                 GButton(
