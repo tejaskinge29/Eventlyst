@@ -5,6 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:Eventlyst/utils/routes.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
+import 'package:Eventlyst/user_data_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -17,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   bool passToggle = true;
-
+  // String userId = '';
 // Function to sign in with Google
   signInWithGoogle() async {
     try {
@@ -166,11 +169,22 @@ class _LoginPageState extends State<LoginPage> {
                           .get();
 
                       if (userDoc.exists) {
+                        // Set the user ID in the provider
+                        Provider.of<UserIdProvider>(context, listen: false)
+                            .setUserId(userCredential.user!.uid);
                         // User data found in Firestore, you can access it like userDoc['fieldName']
                         // Example:
                         // String username = userDoc['username'];
                         print('Username: ${userDoc['username']}');
                         print('Email: ${userDoc['email']}');
+
+                        // Simulating a successful login
+                        // In a real scenario, call your authentication service
+                        // and handle success/failure accordingly.
+                        SharedPreferences prefs =
+                            Provider.of<SharedPreferences>(context,
+                                listen: false);
+                        await prefs.setBool('isLoggedIn', true);
                         // Pass user data to the home page
                         Navigator.pushReplacementNamed(
                           context,

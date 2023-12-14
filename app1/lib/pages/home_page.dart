@@ -7,8 +7,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:Eventlyst/pages/post.dart';
-import 'package:badges/badges.dart';    
+import 'package:badges/badges.dart';
 import 'package:Eventlyst/user_data_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:Eventlyst/pages/login_page.dart';
+import 'package:Eventlyst/pages/FirestorePostDisplay.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // import 'bnav.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,13 +23,25 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  DateTime? currentBackPressTime;
   String username = ''; // Initialize with an empty string
   String email = ''; // Initialize with an empty string
   // Retrieve user data from arguments
   @override
   void initState() {
     super.initState();
+    checkLoginState();
     fetchUserData();
+  }
+
+  Future<void> checkLoginState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+    if (!isLoggedIn) {
+      // If not logged in, navigate to the login page
+      Navigator.pushReplacementNamed(context, MyRoutes.loginRoute);
+    }
   }
 
   Future<void> fetchUserData() async {
@@ -44,6 +60,18 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    SharedPreferences prefs = Provider.of<SharedPreferences>(context);
+
+    // Check if the user is logged in
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+    if (!isLoggedIn) {
+      // If not logged in, navigate to login page
+      Navigator.pushReplacementNamed(context, MyRoutes.loginRoute);
+    }
+    // Access the user ID from the provider
+    String userId = Provider.of<UserIdProvider>(context).userId;
+
     final Map<String, dynamic>? args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
     final DocumentSnapshot? userDoc = args?['userDoc'];
@@ -54,9 +82,20 @@ class _HomePageState extends State<HomePage> {
     }
     return WillPopScope(
       onWillPop: () async {
-        // Handle back button press as needed
-        // Return 'true' to allow the back navigation, or 'false' to block it
-        return false;
+        DateTime now = DateTime.now();
+        if (currentBackPressTime == null ||
+            now.difference(currentBackPressTime!) > Duration(seconds: 2)) {
+          // Show a toast or snackbar indicating that another press is required
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Press again to exit'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+          currentBackPressTime = now;
+          return false;
+        }
+        return true; // Allow the app to exit
       },
       child: Scaffold(
         appBar: AppBar(
@@ -124,17 +163,20 @@ class _HomePageState extends State<HomePage> {
         ),
 // Post Interface
         body: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                //SizedBox(height: 20.0),
-                // Text("Username: ${userDoc?.get('username') ?? 'N/A'}"),
-                // Text("Email: ${userDoc?.get('email') ?? 'N/A'}"),
-                MyPost(),
-                SizedBox(height: 1.0),
-                MyPost(),
-              ],
-            ),
+          child: Column(
+            children: [
+              //SizedBox(height: 20.0),
+              // Text("Username: ${userDoc?.get('username') ?? 'N/A'}"),
+              // Text("Email: ${userDoc?.get('email') ?? 'N/A'}"),
+              // FirestorePostDisplay(),
+
+              // MyPost(),
+              // SizedBox(height: 1.0),
+              // MyPost(),
+              Expanded(
+                child: FirestorePostDisplay(),
+              ),
+            ],
           ),
         ),
         // Navigation bar

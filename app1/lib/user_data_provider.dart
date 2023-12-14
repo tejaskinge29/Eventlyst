@@ -1,13 +1,25 @@
 // import 'package:flutter/material.dart';
-// import 'package:Eventlyst/pages/user_data.dart'; // Import the UserData class
 
-// class UserDataProvider with ChangeNotifier {
-//   UserData _userData;
+// class UserIdProvider extends ChangeNotifier {
+//   String _userId = '';
 
-//   UserData get userData => _userData;
+//   String get userId => _userId;
 
-//   void setUserData(UserData userData) {
-//     _userData = userData;
+//   setUserId(String userId) {
+//     _userId = userId;
 //     notifyListeners();
 //   }
 // }
+
+import 'package:flutter/material.dart';
+
+class UserIdProvider extends ChangeNotifier {
+  String _userId = '';
+
+  String get userId => _userId;
+
+  void setUserId(String userId) {
+    _userId = userId;
+    notifyListeners();
+  }
+}

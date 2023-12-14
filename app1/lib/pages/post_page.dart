@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:Eventlyst/utils/routes.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -18,6 +19,10 @@ class _MyPostState extends State<Mypost> {
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController venueController = TextEditingController();
+
+  Future<User?> getCurrentUser() async {
+    return FirebaseAuth.instance.currentUser;
+  }
 
   // Function to pick an image from the gallery
   void _pickImage() async {
@@ -248,47 +253,56 @@ class _MyPostState extends State<Mypost> {
                     return;
                   }
 
-                  if (_imageFile != null) {
-                    final Reference storageReference = FirebaseStorage.instance
-                        .ref()
-                        .child(
-                            'post_images/${DateTime.now().millisecondsSinceEpoch}');
-                    final UploadTask uploadTask =
-                        storageReference.putFile(File(_imageFile!.path));
-                    final TaskSnapshot taskSnapshot = await uploadTask;
-                    final imageUrl = await taskSnapshot.ref.getDownloadURL();
+                  // Get the current authenticated user
+                  User? currentUser = await getCurrentUser();
 
-                    // Store post data in Firestore with the image URL
-                    await FirebaseFirestore.instance.collection('posts').add({
-                      'title': title,
-                      'description': description,
-                      'venue': venue,
-                      'image_url': imageUrl,
-                    });
+                  if (currentUser != null) {
+                    if (_imageFile != null) {
+                      final Reference storageReference =
+                          FirebaseStorage.instance.ref().child(
+                              'post_images/${DateTime.now().millisecondsSinceEpoch}');
+                      final UploadTask uploadTask =
+                          storageReference.putFile(File(_imageFile!.path));
+                      final TaskSnapshot taskSnapshot = await uploadTask;
+                      final imageUrl = await taskSnapshot.ref.getDownloadURL();
 
-                    // Show a success message
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Post uploaded successfully'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
+                      // Store post data in Firestore with the image URL and user information
+                      await FirebaseFirestore.instance.collection('posts').add({
+                        'title': title,
+                        'description': description,
+                        'venue': venue,
+                        'image_url': imageUrl,
+                        'user_id': currentUser.uid, // Add user ID to the post
+                      });
+
+                      // Show a success message
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Post uploaded successfully'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    } else {
+                      // Store post data in Firestore without an image URL and with user information
+                      await FirebaseFirestore.instance.collection('posts').add({
+                        'title': title,
+                        'description': description,
+                        'venue': venue,
+                        'user_id': currentUser.uid, // Add user ID to the post
+                      });
+
+                      // Show a success message
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              'Post uploaded successfully (without an image)'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    }
                   } else {
-                    // Store post data in Firestore without an image URL
-                    await FirebaseFirestore.instance.collection('posts').add({
-                      'title': title,
-                      'description': description,
-                      'venue': venue,
-                    });
-
-                    // Show a success message
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                            'Post uploaded successfully (without an image)'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
+                    // User is not authenticated, handle accordingly
+                    // You might want to redirect the user to the login screen
                   }
                 },
                 style: ButtonStyle(

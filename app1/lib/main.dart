@@ -19,21 +19,43 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:Eventlyst/firebase_options.dart';
 import 'package:provider/provider.dart';
+import 'package:Eventlyst/user_data_provider.dart';
 // import 'package:Eventlyst/pages/profile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserIdProvider()),
+        Provider<SharedPreferences>.value(
+          value: await SharedPreferences.getInstance(),
+        ),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  // const MyApp({super.key});
+  const MyApp({Key? key});
 
   @override
   Widget build(BuildContext context) {
+    // Access SharedPreferences instance
+    SharedPreferences prefs = Provider.of<SharedPreferences>(context);
+
+    // Check if the user is already logged in
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+    // Determine the initial route based on the login status
+    String initialRoute = isLoggedIn ? MyRoutes.homeRoute : '/';
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       routes: {
@@ -51,7 +73,9 @@ class MyApp extends StatelessWidget {
         MyRoutes.searchRoute: (context) => Search_Page(),
         MyRoutes.profileRoute: (context) => ProfilePage(),
         MyRoutes.adminRoute: (context) => Myadmin(),
-        MyRoutes.showpostRoute: (context) => showpost(),
+        MyRoutes.showpostRoute: (context) => showpost(
+            post: ModalRoute.of(context)?.settings.arguments
+                as Map<String, dynamic>),
         // MyRoutes.Orghome1Route: (context) => ProfilePage(),
       },
     );

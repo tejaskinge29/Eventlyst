@@ -42,10 +42,12 @@ dependencies:
   hooks_riverpod: ^2.4.5
   image_picker: ^1.0.4
   provider: ^6.0.5
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1
   flutter_lints: ^2.0.0
+  mockito: ^5.0.0
   flutter_test:
     sdk: flutter
 

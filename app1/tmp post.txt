@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:Eventlyst/utils/routes.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class MyPost extends StatefulWidget {
   const MyPost({super.key});
@@ -12,47 +10,6 @@ class MyPost extends StatefulWidget {
 
 class _MyPostState extends State<MyPost> {
   bool isStarFilled = false;
-
-  late Future<List<Map<String, dynamic>>> _posts;
-
-  @override
-  void initState() {
-    super.initState();
-    _posts = fetchPosts();
-  }
-
-  Future<List<Map<String, dynamic>>> fetchPosts() async {
-    try {
-      // Get reference to Firestore collection
-      CollectionReference<Map<String, dynamic>> postsCollection =
-          FirebaseFirestore.instance.collection('posts');
-
-      // Fetch documents from the collection
-      QuerySnapshot<Map<String, dynamic>> postsQuery =
-          await postsCollection.get();
-
-      // Convert each document to a map and return the list
-      return postsQuery.docs.map((DocumentSnapshot<Map<String, dynamic>> doc) {
-        return doc.data()!;
-      }).toList();
-    } catch (e) {
-      print('Error fetching posts: $e');
-      return [];
-    }
-  }
-
-  Widget _buildImage(String imageUrl) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: Image.network(
-        imageUrl,
-        height: 100,
-        width: double.infinity,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;

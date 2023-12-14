@@ -5,6 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:Eventlyst/pages/notification_provider.dart';
 
 class showpost extends StatelessWidget {
+  final Map<String, dynamic> post;
+
+  showpost({required this.post});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +35,7 @@ class showpost extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.only(left: 20),
                 child: Text(
-                  'Music Concert',
+                  post['title'] ?? 'Event Title',
                   style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
@@ -39,24 +43,38 @@ class showpost extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Text(
-                'Greetings from Department of Electronics & Telecommunication Engineering, Yeshwantrao Chavan College of Engineering (YCCE), Nagpur.\n3 Day’s Student Training Program (STP) on "Unity Scripting: Bringing Your Ideas to Life" under the Aegis of IQAC & IETE Student Chapter YCCE is scheduled in the department during 05-07 August 2023.',
-                style: TextStyle(fontSize: 16),
+
+            Align(
+              alignment: Alignment.topLeft,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Text(
+                  post['description'] ?? 'Event Description',
+                  style: TextStyle(fontSize: 16),
+                ),
               ),
             ),
             Padding(
               padding: EdgeInsets.only(top: 20),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  "assets/images/design.jpg",
-                  width: 300,
-                  height: 300,
-                ),
+              child: Image.network(
+                post['image_url'] ?? '',
+                // width: double.infinity,
+                height: 300,
+                width: 300, // Adjust the height as needed
+                fit: BoxFit.cover,
               ),
             ),
+            // Padding(
+            //   padding: EdgeInsets.only(top: 20),
+            //   // child: ClipRRect(
+            //   //   borderRadius: BorderRadius.circular(8),
+            //   //   child: Image.asset(
+            //   //     "assets/images/design.jpg",
+            //   //     width: 300,
+            //   //     height: 300,
+            //   //   ),
+            //   // ),
+            // ),
             Padding(
               padding: EdgeInsets.only(top: 20),
               child: Row(

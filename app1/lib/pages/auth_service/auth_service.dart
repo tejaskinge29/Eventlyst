@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -23,6 +24,9 @@ class AuthService {
       if (user != null) {
         // User signed in successfully, now store user data in Firestore
         await storeUserDataInFirestore(user);
+
+        // Save login state in shared preferences
+        saveLoginState();
 
         return user;
       } else {
@@ -53,6 +57,41 @@ class AuthService {
       }
     } catch (error) {
       print('Error storing user data in Firestore: $error');
+    }
+  }
+
+  Future<void> saveLoginState() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', true);
+    } catch (error) {
+      print('Error saving login state: $error');
+    }
+  }
+
+  Future<User?> checkUser() async {
+    return _auth.currentUser;
+  }
+
+  Future<void> signOut() async {
+    try {
+      // Sign out from Firebase and Google
+      await _auth.signOut();
+      await _googleSignIn.signOut();
+
+      // Clear login state from shared preferences
+      clearLoginState();
+    } catch (error) {
+      print('Sign Out Error: $error');
+    }
+  }
+
+  Future<void> clearLoginState() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.remove('isLoggedIn');
+    } catch (error) {
+      print('Error clearing login state: $error');
     }
   }
 }
