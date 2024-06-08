@@ -63,6 +63,8 @@ class _orgLoginState extends State<orgLogin> {
                     // Regular expression to validate Gmail format
                     RegExp gmailPattern = RegExp(
                       r"^[a-zA-Z0-9._%+-]+@(gmail\.com|ycce\.in|ycce\.org)$",
+                      // General to access specific structure email
+                      //   r"^[a-zA-Z0-9.a-zA-Z0-9.!#!$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                       // r"^[a-zA-Z0-9._%+-]+@(gmail\.com|example\.in|example\.org)$",
                       caseSensitive: false,
                     );

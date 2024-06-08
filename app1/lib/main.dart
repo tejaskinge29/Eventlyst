@@ -14,6 +14,7 @@ import 'package:Eventlyst/pages/settings.dart';
 import 'package:Eventlyst/utils/routes.dart';
 import 'package:Eventlyst/pages/signup_page.dart';
 import 'package:Eventlyst/pages/showpost.dart';
+import 'package:Eventlyst/pages/showregisteredpost.dart';
 import 'package:Eventlyst/pages/authPage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -23,41 +24,44 @@ import 'package:Eventlyst/user_data_provider.dart';
 // import 'package:Eventlyst/pages/profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> main() async {
+Future<String> determineInitialRoute() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+  return isLoggedIn ? MyRoutes.homeRoute : '/';
+}
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // Determine the initial route
+  String initialRoute = await determineInitialRoute();
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => UserIdProvider()),
+        // You can directly use SharedPreferences where needed
         Provider<SharedPreferences>.value(
-          value: await SharedPreferences.getInstance(),
-        ),
+            value: await SharedPreferences.getInstance()),
       ],
-      child: MyApp(),
+      child: MyApp(initialRoute: initialRoute),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
   // const MyApp({super.key});
-  const MyApp({Key? key});
+  final String initialRoute;
+  const MyApp({Key? key, required this.initialRoute}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // Access SharedPreferences instance
     SharedPreferences prefs = Provider.of<SharedPreferences>(context);
 
-    // Check if the user is already logged in
-    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-
-    // Determine the initial route based on the login status
-    String initialRoute = isLoggedIn ? MyRoutes.homeRoute : '/';
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      initialRoute: initialRoute,
       routes: {
         "/": (context) => IntroPage(),
         MyRoutes.loginRoute: (context) => LoginPage(),
@@ -74,6 +78,9 @@ class MyApp extends StatelessWidget {
         MyRoutes.profileRoute: (context) => ProfilePage(),
         MyRoutes.adminRoute: (context) => Myadmin(),
         MyRoutes.showpostRoute: (context) => showpost(
+            post: ModalRoute.of(context)?.settings.arguments
+                as Map<String, dynamic>),
+        MyRoutes.showregisteredpostRoute: (context) => showregisteredpost(
             post: ModalRoute.of(context)?.settings.arguments
                 as Map<String, dynamic>),
         // MyRoutes.Orghome1Route: (context) => ProfilePage(),

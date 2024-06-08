@@ -6,25 +6,11 @@ import 'package:Eventlyst/pages/notification_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:Eventlyst/pages/FirestorePostDisplay.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
 
-class showpost extends StatelessWidget {
+class showregisteredpost extends StatelessWidget {
   final Map<String, dynamic> post;
 
-  showpost({required this.post});
-
-  String formatTime(dynamic time) {
-    if (time is Timestamp) {
-      return DateFormat('hh:mm a').format(time.toDate());
-    } else if (time is String) {
-      // Assuming that the time is in a specific format, adjust this accordingly
-      // For example, if it's in 'HH:mm' format, you might use:
-      // return DateFormat('HH:mm').format(DateTime.parse(time));
-      return time; // Adjust this line based on the actual format of the time string
-    } else {
-      return 'Not specified';
-    }
-  }
+  showregisteredpost({required this.post});
 
   Future<void> registerUserForEvent(
     String eventId,
@@ -114,139 +100,78 @@ class showpost extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.only(top: 20),
-              child: post['image_url'] != null
-                  ? Image.network(
-                      post['image_url']!,
-                      height: 300,
-                      width: 300,
-                      fit: BoxFit.cover,
-                    )
-                  : SizedBox
-                      .shrink(), // This will occupy no space when image_url is null
+              child: Image.network(
+                post['image_url'] ?? '',
+                height: 300,
+                width: 300,
+                fit: BoxFit.cover,
+              ),
             ),
-
-            // this is for row format
-            // Padding(
-            //   padding: EdgeInsets.only(top: 20),
-            //   child: Row(
-            //     children: [
-            //       Padding(
-            //         padding: EdgeInsets.only(left: 30),
-            //         child: Text(
-            //           'Free : Free',
-            //           style: TextStyle(
-            //             fontSize: 16,
-            //             fontWeight: FontWeight.bold,
-            //           ),
-            //         ),
-            //       ),
-            //       Padding(
-            //         padding: EdgeInsets.only(left: 100),
-            //         child: Text(
-            //           post['selected_time'] ?? 'Event Timing',
-            //           style: TextStyle(
-            //             fontSize: 16,
-            //             fontWeight: FontWeight.bold,
-            //           ),
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-            // Padding(
-            //   padding: EdgeInsets.only(top: 10),
-            //   child: Row(
-            //     children: [
-            //       Column(
-            //         children: [
-            //           Padding(
-            //             padding: EdgeInsets.only(left: 30),
-            //             child: Text(
-            //               'Venue : YCCE',
-            //               style: TextStyle(
-            //                 fontSize: 16,
-            //                 fontWeight: FontWeight.bold,
-            //               ),
-            //             ),
-            //           ),
-            //         ],
-            //       ),
-            //       Padding(
-            //         padding: EdgeInsets.only(left: 80),
-            //         child: Text(
-            //           post['selected_date'] != null
-            //               ? DateFormat('yyyy/MM/dd').format(
-            //                   (post['selected_date'] as Timestamp).toDate())
-            //               : 'Not specified',
-            //           style: TextStyle(
-            //             fontSize: 16,
-            //             fontWeight: FontWeight.bold,
-            //           ),
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-
             Padding(
               padding: EdgeInsets.only(top: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  Text(
-                    'Free: Free',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                  Padding(
+                    padding: EdgeInsets.only(left: 30),
+                    child: Text(
+                      'Free : Free',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Venue: YCCE',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Event Timing: ${post['selected_time'] != null ? formatTime(post['selected_time']) : 'Not specified'}',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Event Date: ${post['selected_date'] != null ? DateFormat('yyyy/MM/dd').format((post['selected_date'] as Timestamp).toDate()) : 'Not specified'}',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                  Padding(
+                    padding: EdgeInsets.only(left: 100),
+                    child: Text(
+                      'Time : 12:30 pm',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-
+            Padding(
+              padding: EdgeInsets.only(top: 10),
+              child: Row(
+                children: [
+                  Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 30),
+                        child: Text(
+                          'Venue : YCCE',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 80),
+                    child: Text(
+                      'Date : 05-12-24',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Padding(
               padding: EdgeInsets.all(20),
-              child: ElevatedButton(
-                onPressed: () async {
-                  User? currentUser = FirebaseAuth.instance.currentUser;
-                  if (currentUser != null) {
-                    // User is authenticated, proceed with registration
-                    registerUserForEvent(
-                      post['post_id'], // Replace with your actual event ID
-                      currentUser.uid,
-                      'Additional Registration Details',
-                      context, // Pass the BuildContext
-                    );
-                  } else {
-                    // User is not authenticated, handle accordingly
-                    // You might want to redirect the user to the login screen
-                  }
-                },
-                child: Text('Register now'),
+              child: Text(
+                'You have already registered',
+                style: TextStyle(
+                  fontSize: 12,
+                ),
               ),
             ),
           ],

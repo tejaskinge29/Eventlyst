@@ -20,23 +20,23 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   bool passToggle = true;
-  // String userId = '';
+
 // Function to sign in with Google
-  signInWithGoogle() async {
-    try {
-      await authService.signInWithGoogle();
-      Navigator.pushNamed(
-        context,
-        MyRoutes.homeRoute,
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Google Sign-In Error: $e"),
-        ),
-      );
-    }
-  }
+  // signInWithGoogle() async {
+  //   try {
+  //     await authService.signInWithGoogle();
+  //     Navigator.pushNamed(
+  //       context,
+  //       MyRoutes.homeRoute,
+  //     );
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text("Google Sign-In Error: $e"),
+  //       ),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -139,10 +139,30 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       // SizedBox(height: 16),
                       TextButton(
-                          onPressed: () {}, child: Text("forget password ?")),
-                      // SizedBox(
-                      //   height: 20,
-                      // ),
+                        onPressed: () async {
+                          try {
+                            String email = _emailController.text.trim();
+
+                            // Send a password reset email
+                            await FirebaseAuth.instance
+                                .sendPasswordResetEmail(email: email);
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content:
+                                    Text('Password reset email sent to $email'),
+                              ),
+                            );
+                          } catch (error) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Password reset failed: $error'),
+                              ),
+                            );
+                          }
+                        },
+                        child: const Text("Forgot Password?"),
+                      ),
                     ],
                   ),
                 ),
@@ -174,17 +194,27 @@ class _LoginPageState extends State<LoginPage> {
                             .setUserId(userCredential.user!.uid);
                         // User data found in Firestore, you can access it like userDoc['fieldName']
                         // Example:
-                        // String username = userDoc['username'];
+                        String username = userDoc['username'];
+                        String name = userDoc['name'];
                         print('Username: ${userDoc['username']}');
                         print('Email: ${userDoc['email']}');
 
                         // Simulating a successful login
                         // In a real scenario, call your authentication service
                         // and handle success/failure accordingly.
+                        // SharedPreferences prefs =SSS
+                        //     Provider.of<SharedPreferences>(context,
+                        //         listen: false);
+                        // await prefs.setBool('isLoggedIn', true);
+                        // Store the user ID in SharedPreferences
                         SharedPreferences prefs =
-                            Provider.of<SharedPreferences>(context,
-                                listen: false);
+                            await SharedPreferences.getInstance();
                         await prefs.setBool('isLoggedIn', true);
+                        await prefs.setString(
+                            'userId', userCredential.user!.uid);
+                        await prefs.setString('email', _emailController.text);
+                        await prefs.setString('username', username);
+                        await prefs.setString('name', name);
                         // Pass user data to the home page
                         Navigator.pushReplacementNamed(
                           context,
@@ -202,6 +232,15 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         );
                       }
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      await prefs.setBool('isLoggedIn', true);
+
+                      Navigator.pushReplacementNamed(
+                        context,
+                        MyRoutes.homeRoute,
+                        arguments: {'userDoc': userDoc},
+                      );
                     }
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -236,15 +275,14 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   children: [
                     IconButton(
-                      icon: Image.asset(
-                        'assets/images/google.png',
-                        height: MediaQuery.of(context).size.height * 0.045,
-                        width: MediaQuery.of(context).size.width * 0.12,
-                      ),
-                      // iconSize: 50,
-                      // onPressed: authService.handleSignIn,
-                      onPressed: signInWithGoogle,
-                    )
+                        icon: Image.asset(
+                          'assets/images/google.png',
+                          height: MediaQuery.of(context).size.height * 0.045,
+                          width: MediaQuery.of(context).size.width * 0.12,
+                        ),
+                        // iconSize: 50,
+                        // onPressed: authService.handleSignIn,
+                        onPressed: () => authService.signInWithGoogle(context))
                   ],
                 ),
               ),

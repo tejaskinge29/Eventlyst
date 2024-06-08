@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:intl/intl.dart';
 
 class Mypost extends StatefulWidget {
   const Mypost({Key? key}) : super(key: key);
@@ -15,6 +16,8 @@ class Mypost extends StatefulWidget {
 }
 
 class _MyPostState extends State<Mypost> {
+  DateTime? selectedDate;
+  TimeOfDay? selectedTime;
   XFile? _imageFile;
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
@@ -36,9 +39,47 @@ class _MyPostState extends State<Mypost> {
     }
   }
 
-// Define the method to upload data to Firebase Cloud Storage and Firestore
-  Future<void> uploadDataToCloud(
-      String title, String description, String venue) async {
+// logic to select date
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
+
+// logic for selecting Time
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (picked != null) {
+      setState(() {
+        selectedTime = picked;
+      });
+    }
+  }
+
+  String convertTimeOfDayToString(TimeOfDay timeOfDay) {
+    final now = DateTime.now();
+    final dateTime = DateTime(
+        now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
+    final formattedTime = DateFormat('hh:mm a').format(dateTime);
+    return formattedTime;
+  }
+
+  // Define the method to upload data to Firebase Cloud Storage and Firestore
+  Future<void> uploadDataToCloud(String title, String description, String venue,
+      BuildContext context) async {
     try {
       if (_imageFile != null) {
         final Reference storageReference = FirebaseStorage.instance
@@ -49,6 +90,20 @@ class _MyPostState extends State<Mypost> {
         final TaskSnapshot taskSnapshot = await uploadTask;
         final imageUrl = await taskSnapshot.ref.getDownloadURL();
 
+        if (selectedDate == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Please select a date'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+          return;
+        }
+
+        // Convert TimeOfDay to String
+        final selectedTimeString =
+            selectedTime != null ? convertTimeOfDayToString(selectedTime!) : '';
+
         // Store post data in Firestore
         final postDocRef =
             await FirebaseFirestore.instance.collection('posts').add({
@@ -56,14 +111,55 @@ class _MyPostState extends State<Mypost> {
           'description': description,
           'venue': venue,
           'image_url': imageUrl, // Store the image URL
+          'selected_date':
+              selectedDate != null ? Timestamp.fromDate(selectedDate!) : null,
+          'selected_time': selectedTimeString,
+          'timestamp': FieldValue.serverTimestamp(),
         });
 
-        print('Post uploaded successfully with ID: ${postDocRef.id}');
+        // Get the ID of the created document
+        final postId = postDocRef.id;
+
+        // Update the post with its own ID
+        await postDocRef.update({'post_id': postId});
+
+        print('Post uploaded successfully with ID: $postId');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Post uploaded successfully with ID: $postId'),
+            duration: Duration(seconds: 2),
+          ),
+        );
       } else {
-        print('No image selected.');
+        final selectedTimeString =
+            selectedTime != null ? convertTimeOfDayToString(selectedTime!) : '';
+        // Store post data in Firestore without an image URL and with user information
+        await FirebaseFirestore.instance.collection('posts').add({
+          'title': title,
+          'description': description,
+          'venue': venue,
+          'selected_date': selectedDate,
+          'selected_time': selectedTimeString,
+          'user_id':
+              FirebaseAuth.instance.currentUser?.uid, // Add user ID to the post
+        });
       }
+      // Show a success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Post uploaded successfully'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     } catch (e) {
+      // Handle the error
       print('Error uploading post: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to upload the post'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     }
   }
 
@@ -98,11 +194,10 @@ class _MyPostState extends State<Mypost> {
                 decoration: InputDecoration(
                   labelText: 'Enter event title',
                   border: OutlineInputBorder(
-                    // Customize the border size here
-                    borderRadius: BorderRadius.circular(12.0), // Border radius
+                    borderRadius: BorderRadius.circular(12.0),
                     borderSide: BorderSide(
-                      color: Colors.black, // Border color
-                      width: 1.0, // Border width
+                      color: Colors.black,
+                      width: 1.0,
                     ),
                   ),
                   floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -132,11 +227,10 @@ class _MyPostState extends State<Mypost> {
                 decoration: InputDecoration(
                   labelText: 'Enter event description ',
                   border: OutlineInputBorder(
-                    // Customize the border size here
-                    borderRadius: BorderRadius.circular(12.0), // Border radius
+                    borderRadius: BorderRadius.circular(12.0),
                     borderSide: BorderSide(
-                      color: Colors.black, // Border color
-                      width: 1.0, // Border width
+                      color: Colors.black,
+                      width: 1.0,
                     ),
                   ),
                   floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -166,12 +260,10 @@ class _MyPostState extends State<Mypost> {
                 decoration: InputDecoration(
                   labelText: 'Enter a venue ',
                   border: OutlineInputBorder(
-                    // Customize the border size here
-                    borderRadius: BorderRadius.circular(12.0), // Border radius
+                    borderRadius: BorderRadius.circular(12.0),
                     borderSide: BorderSide(
-                      color: Colors.black, // Border color
+                      color: Colors.black,
                       width: 1.0,
-                      // Border width
                     ),
                   ),
                   floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -185,6 +277,66 @@ class _MyPostState extends State<Mypost> {
               Align(
                 alignment: AlignmentDirectional(-1.00, 0.00),
                 child: Text(
+                  'Event Time',
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.01,
+              ),
+              TextFormField(
+                readOnly: true,
+                onTap: () => _selectTime(context),
+                decoration: InputDecoration(
+                  labelText: 'Select Time',
+                  suffixIcon: Icon(Icons.access_time),
+                ),
+                controller: selectedTime != null
+                    ? TextEditingController(
+                        text: '${selectedTime!.format(context)}',
+                      )
+                    : null,
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.02,
+              ),
+              Align(
+                alignment: AlignmentDirectional(-1.00, 0.00),
+                child: Text(
+                  'Event Date',
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.01,
+              ),
+              TextFormField(
+                readOnly: true,
+                onTap: () => _selectDate(context),
+                decoration: InputDecoration(
+                  labelText: 'Select Date',
+                  suffixIcon: Icon(Icons.calendar_today),
+                ),
+                controller: selectedDate != null
+                    ? TextEditingController(
+                        text: '${selectedDate!.toLocal()}'.split(' ')[0],
+                      )
+                    : null,
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.05,
+              ),
+              Align(
+                alignment: AlignmentDirectional(-1.00, 0.00),
+                child: Text(
                   'Select Image',
                   style: TextStyle(
                     fontFamily: 'Plus Jakarta Sans',
@@ -193,44 +345,37 @@ class _MyPostState extends State<Mypost> {
                   ),
                 ),
               ),
-              // Image preview
               if (_imageFile != null)
-                // Image.network(
-                //   'https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Temp_plate.svg/601px-Temp_plate.svg.png', // Provide the URL of the image
-                //   height: 200, // Set the desired height
-                //   width: 200, // Set the desired width
-                // )
                 Image.file(
-                  File(_imageFile!
-                      .path), // Use null check operator (!) to access path
-                  height: 200, // Set the desired height
-                  width: 200, // Set the desired width
+                  File(_imageFile!.path),
+                  height: 200,
+                  width: 200,
                 )
               else
-                Container(), // Hide the image preview if no image is selected
+                Container(),
               ElevatedButton(
                 onPressed: _pickImage,
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                      Colors.white), // Set button background color
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Colors.white),
                   shape: MaterialStateProperty.all<OutlinedBorder>(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                          8.0), // Adjust border radius as needed
+                      borderRadius: BorderRadius.circular(8.0),
                       side: BorderSide(
-                          color: Colors.black,
-                          width: 1.0), // Set border color and width
+                        color: Colors.black,
+                        width: 1.0,
+                      ),
                     ),
                   ),
                   textStyle: MaterialStateProperty.all<TextStyle>(
                     TextStyle(
-                        color: Colors
-                            .transparent), // Set text color to transparent
+                      color: Colors.transparent,
+                    ),
                   ),
                 ),
                 child: Icon(
                   Icons.cloud_upload,
-                  color: Colors.black, // Set icon color to black
+                  color: Colors.black,
                 ),
               ),
               SizedBox(
@@ -243,7 +388,6 @@ class _MyPostState extends State<Mypost> {
                   final venue = venueController.text;
 
                   if (title.isEmpty || description.isEmpty || venue.isEmpty) {
-                    // Show an error message if any of the fields are empty
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Please fill in all fields'),
@@ -253,53 +397,10 @@ class _MyPostState extends State<Mypost> {
                     return;
                   }
 
-                  // Get the current authenticated user
                   User? currentUser = await getCurrentUser();
 
                   if (currentUser != null) {
-                    if (_imageFile != null) {
-                      final Reference storageReference =
-                          FirebaseStorage.instance.ref().child(
-                              'post_images/${DateTime.now().millisecondsSinceEpoch}');
-                      final UploadTask uploadTask =
-                          storageReference.putFile(File(_imageFile!.path));
-                      final TaskSnapshot taskSnapshot = await uploadTask;
-                      final imageUrl = await taskSnapshot.ref.getDownloadURL();
-
-                      // Store post data in Firestore with the image URL and user information
-                      await FirebaseFirestore.instance.collection('posts').add({
-                        'title': title,
-                        'description': description,
-                        'venue': venue,
-                        'image_url': imageUrl,
-                        'user_id': currentUser.uid, // Add user ID to the post
-                      });
-
-                      // Show a success message
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Post uploaded successfully'),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                    } else {
-                      // Store post data in Firestore without an image URL and with user information
-                      await FirebaseFirestore.instance.collection('posts').add({
-                        'title': title,
-                        'description': description,
-                        'venue': venue,
-                        'user_id': currentUser.uid, // Add user ID to the post
-                      });
-
-                      // Show a success message
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                              'Post uploaded successfully (without an image)'),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                    }
+                    await uploadDataToCloud(title, description, venue, context);
                   } else {
                     // User is not authenticated, handle accordingly
                     // You might want to redirect the user to the login screen
@@ -322,7 +423,6 @@ class _MyPostState extends State<Mypost> {
           ),
         ),
       ),
-      // Navigation bar
       bottomNavigationBar: Container(
         height: (MediaQuery.of(context).size.height * 0.1),
         color: Colors.black,
@@ -330,7 +430,6 @@ class _MyPostState extends State<Mypost> {
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: GNav(
             gap: 12,
-            // backgroundColor: Colors.black,
             color: Colors.white,
             activeColor: Colors.white,
             tabBackgroundColor: Colors.black,

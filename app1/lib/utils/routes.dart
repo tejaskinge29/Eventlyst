@@ -15,5 +15,7 @@ class MyRoutes {
   static String profileRoute = "/profile";
   static String adminRoute = "/admin";
   static String showpostRoute = "/showpost";
+  static String showregisteredpostRoute = "/showregisteredpost";
+
   static of(BuildContext context) {}
 }

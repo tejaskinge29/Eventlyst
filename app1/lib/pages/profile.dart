@@ -9,20 +9,66 @@ import 'package:Eventlyst/user_data_provider.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:image_picker/image_picker.dart';
+import 'package:Eventlyst/pages/acpost.dart';
+import 'package:Eventlyst/pages/acattend.dart';
+import 'package:Eventlyst/pages/auth_service/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
+class UserDataManager {
+  AuthService authService = AuthService();
+  late SharedPreferences _prefs;
+  late Map<String, String?> userData;
+
+  Future<void> initialize() async {
+    _prefs = await SharedPreferences.getInstance();
+    userData = await authService.getUserDataFromSharedPreferences();
+  }
+
+  String? getUserId() {
+    return _prefs.getString('userId');
+  }
+
+  String? getUsername() {
+    return userData['username'];
+  }
+
+  String? getEmail() {
+    return userData['email'];
+  }
+}
+
 class _ProfilePageState extends State<ProfilePage> {
+  AuthService authService = AuthService();
   bool isEditing = false;
   TextEditingController nameController =
       TextEditingController(text: "Personal Name");
+  late UserDataManager userDataManager;
+
+  @override
+  void initState() {
+    super.initState();
+    userDataManager = UserDataManager();
+    _initUserData();
+  }
+
+  Future<void> _initUserData() async {
+    try {
+      await userDataManager.initialize();
+      print('Username: ${userDataManager.getUsername()}');
+      setState(() {}); // Trigger a rebuild after initializing data
+    } catch (error) {
+      print('Error initializing user data: $error');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    String userId = Provider.of<UserIdProvider>(context).userId;
+    String? userId = userDataManager.getUserId();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -32,24 +78,27 @@ class _ProfilePageState extends State<ProfilePage> {
           },
         ),
         title: const Text("Profile"),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {
-              setState(() {
-                isEditing = !isEditing;
-                if (isEditing) {
-                  nameController.text = "Personal Name";
-                }
-              });
-            },
-            icon: Icon(isEditing ? Icons.done : Icons.edit_outlined),
-          ),
-        ],
+        // actions: <Widget>[
+        //   IconButton(
+        //     onPressed: () {
+        //       setState(() {
+        //         isEditing = !isEditing;
+        //         if (isEditing) {
+        //           nameController.text = "Personal Name";
+        //         }
+        //       });
+        //     },
+        //     icon: Icon(isEditing ? Icons.done : Icons.edit_outlined),
+        //   ),
+        // ],
       ),
       body: ProfileBody(
         isEditing: isEditing,
         nameController: nameController,
-        userId: userId,
+        userId: userId ?? '',
+        username: userDataManager
+            .getUsername(), // Pass the username to the ProfileBody
+        userDataManager: userDataManager,
       ),
     );
   }
@@ -59,35 +108,55 @@ class ProfileBody extends StatelessWidget {
   final bool isEditing;
   final TextEditingController nameController;
   final String userId;
-  ProfileBody(
-      {required this.isEditing,
-      required this.nameController,
-      required this.userId});
+  final String? username;
+  // final String profilePhotoUrl;
 
-//  hosted post  data
-  Future<List<Map<String, dynamic>>> getHostedPosts(String userId) async {
-    try {
-      CollectionReference posts =
-          FirebaseFirestore.instance.collection('posts');
+  final UserDataManager userDataManager;
 
-      QuerySnapshot postsQuery =
-          await posts.where('userId', isEqualTo: userId).get();
+  ProfileBody({
+    required this.isEditing,
+    required this.nameController,
+    required this.userId,
+    required this.username,
+    required this.userDataManager,
+  });
 
-      if (postsQuery.docs.isNotEmpty) {
-        // Explicitly cast the data to the correct type
-        List<Map<String, dynamic>> hostedPosts = postsQuery.docs
-            .map((DocumentSnapshot doc) => doc.data() as Map<String, dynamic>)
-            .toList();
+  // final bool isEditing;
+  // final TextEditingController nameController;
+  // final String userId;
 
-        return hostedPosts;
-      } else {
-        return [];
-      }
-    } catch (e) {
-      print('Error fetching hosted posts: $e');
-      return [];
-    }
-  }
+  // ProfileBody({
+  //   required this.isEditing,
+  //   required this.nameController,
+  //   required this.userId,
+  // }) {
+  //   _initPrefs();
+  // }
+
+  //  hosted post  data
+  // Future<List<Map<String, dynamic>>> getHostedPosts(String userId) async {
+  //   try {
+  //     CollectionReference posts =
+  //         FirebaseFirestore.instance.collection('posts');
+
+  //     QuerySnapshot postsQuery =
+  //         await posts.where('userId', isEqualTo: userId).get();
+
+  //     if (postsQuery.docs.isNotEmpty) {
+  //       // Explicitly cast the data to the correct type
+  //       List<Map<String, dynamic>> hostedPosts = postsQuery.docs
+  //           .map((DocumentSnapshot doc) => doc.data() as Map<String, dynamic>)
+  //           .toList();
+
+  //       return hostedPosts;
+  //     } else {
+  //       return [];
+  //     }
+  //   } catch (e) {
+  //     print('Error fetching hosted posts: $e');
+  //     return [];
+  //   }
+  // }
 
   File? _image;
 
@@ -98,109 +167,106 @@ class ProfileBody extends StatelessWidget {
     });
   }
 
-  Future<Map<String, dynamic>> getUserData(String userId) async {
-    try {
-      CollectionReference users =
-          FirebaseFirestore.instance.collection('users');
+  // Future<Map<String, dynamic>> getUserData(String userId) async {
+  //   try {
+  //     CollectionReference users =
+  //         FirebaseFirestore.instance.collection('users');
 
-      QuerySnapshot userQuery =
-          await users.where('userId', isEqualTo: userId).get();
+  //     QuerySnapshot userQuery =
+  //         await users.where('userId', isEqualTo: userId).limit(1).get();
 
-      if (userQuery.docs.isNotEmpty) {
-        var userData = userQuery.docs.first.data();
-        if (userData != null && userData is Map<String, dynamic>) {
-          return userData;
-        }
-      }
-      return {};
-    } catch (e) {
-      print('Error fetching user data: $e');
-      return {};
-    }
-  }
+  //     if (userQuery.docs.isNotEmpty) {
+  //       var userData = userQuery.docs.first.data();
+  //       if (userData != null && userData is Map<String, dynamic>) {
+  //         return userData;
+  //       }
+  //     }
+  //     return {};
+  //   } catch (e) {
+  //     print('Error fetching user data: $e');
+  //     return {};
+  //   }
+  // }
+  // Future<Map<String, dynamic>> getUserData(String userId) async {
+  //   try {
+  //     // Assuming you have a 'users' collection in Firestore
+  //     DocumentSnapshot<Map<String, dynamic>> userDoc = await FirebaseFirestore
+  //         .instance
+  //         .collection('users')
+  //         .doc(userId)
+  //         .get();
+
+  //     if (userDoc.exists) {
+  //       // If the document exists, return the user data
+  //       Map<String, dynamic> userData = userDoc.data() ?? {};
+  //       return userData;
+  //     } else {
+  //       // If the document doesn't exist, handle it accordingly
+  //       return {};
+  //     }
+  //   } catch (e) {
+  //     print('Error fetching user data: $e');
+  //     return {};
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, dynamic>>(
-      future: getUserData(userId),
-      builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error loading user data');
-        } else {
-          Map<String, dynamic> userData = snapshot.data ?? {};
-          String username = userData['username'] ?? '@username';
-          String personalName = userData['personalName'] ?? 'Personal Name';
-          String profilePhotoUrl = userData['profilePhotoUrl'] ?? '';
-
-          return Container(
-            alignment: Alignment.topCenter,
-            padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
-            child: Column(
-              children: [
-                ClipOval(
-                  child: _image != null
-                      ? Image.file(
-                          _image!,
-                          width: 100,
-                          height: 100,
-                        )
-                      : profilePhotoUrl.isNotEmpty
-                          ? Image.network(
-                              profilePhotoUrl,
-                              width: 100,
-                              height: 100,
-                            )
-                          : Image.asset(
-                              "assets/images/profile.png",
-                              width: 100,
-                              height: 100,
-                            ),
-                ),
-                SizedBox(height: 10),
-                // ElevatedButton(
-                //   onPressed: _pickImage,
-                //   child: Text("Pick Image"),
-                // ),
-                isEditing
-                    ? TextField(
-                        controller: nameController,
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 30, vertical: 10),
-                          focusedBorder: InputBorder.none,
-                          hintText: "Enter Name",
+    // String profilePhotoUrl = userDataManager['profilePhotoUrl'] ?? '';
+    // String? userId = getUserIdFromSharedPreferences();
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              alignment: Alignment.topCenter,
+              padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+              child: Column(
+                children: [
+                  ClipOval(
+                    // Implement this when we write the logic for storing profile pic and fetching it from users collection
+                    // child: _image != null
+                    //     ? Image.file(
+                    //         _image!,
+                    //         width: 100,
+                    //         height: 100,
+                    //       )
+                    //     : profilePhotoUrl.isNotEmpty
+                    //         ? Image.network(
+                    //             profilePhotoUrl,
+                    //             width: 100,
+                    //             height: 100,
+                    //           )
+                    child: Image.asset(
+                      "assets/images/profile.png",
+                      width: 80,
+                      height: 80,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Container(
+                    child: Column(
+                      children: [
+                        Text(
+                          username ?? 'N/A',
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
                         ),
-                      )
-                    : Text(
-                        personalName,
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
-                      ),
-                SizedBox(height: 5),
-                Text(
-                  "@$username",
-                  style: TextStyle(fontSize: 15, color: Colors.black),
-                ),
-                Text(
-                  "$userId",
-                  style: TextStyle(fontSize: 15, color: Colors.black),
-                ),
-                ToggleButtonsExample(
-                  userId: 'userId',
-                ),
-              ],
-            ),
-          );
-        }
-      },
+                        SizedBox(height: 3),
+                        ToggleButtonsExample(
+                          userId: 'userId',
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 
@@ -288,6 +354,7 @@ class _ToggleButtonsExampleState extends State<ToggleButtonsExample> {
           Visibility(
             visible: selectedTabIndex == 0,
             child: HostedPanel(),
+            // child: acpost(),
           ),
           Visibility(
             visible: selectedTabIndex == 1,
@@ -302,13 +369,18 @@ class _ToggleButtonsExampleState extends State<ToggleButtonsExample> {
 class HostedPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          "Event Hosted Panel",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-      ],
+    return Container(
+      // Add a container with size constraints
+      width: 600, // Set width as needed
+      height: 800, // Set height as needed
+      child: Column(
+        children: [
+          SizedBox(height: 10),
+          Expanded(
+            child: acpost(),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -316,18 +388,21 @@ class HostedPanel extends StatelessWidget {
 class AttendedPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          "Attended Panel",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-      ],
+    return Container(
+      // Add a container with size constraints
+      width: 600, // Set width as needed
+      height: 800, // Set height as needed
+      child: Column(
+        children: [
+          SizedBox(height: 10),
+          Expanded(
+            child: acattend(),
+          ),
+        ],
+      ),
     );
   }
 }
-
-
 
 // class FirestoreService {
 //   static Future<List<Map<String, dynamic>>> getHostedPosts(

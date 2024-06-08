@@ -3,9 +3,10 @@ import 'package:Eventlyst/utils/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // to store data in firestore
 import 'package:Eventlyst/pages/auth_service/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignupPage extends StatefulWidget {
-  const SignupPage({super.key});
+  const SignupPage({Key? key}) : super(key: key);
 
   @override
   State<SignupPage> createState() => _SignupPageState();
@@ -37,7 +38,8 @@ class _SignupPageState extends State<SignupPage> {
 
       if (userCredential.user != null) {
         // User registered successfully with Firebase Authentication.
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        DocumentSnapshot<Map<String, dynamic>> userDoc = await FirebaseFirestore
+            .instance
             .collection('users')
             .doc(userCredential.user!.uid)
             .get();
@@ -50,9 +52,17 @@ class _SignupPageState extends State<SignupPage> {
           'name': _name.text,
           'username': _username.text,
           'email': email,
-
+          'userId': userCredential.user!.uid,
           // Add other user data fields as needed.
         });
+
+        // After successful signup, set isLoggedIn to true in shared preferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
+        await prefs.setString('userId', userCredential.user!.uid);
+        await prefs.setString('username', _username.text);
+        await prefs.setString('name', _name.text);
+        await prefs.setString('email', email);
 
         setState(() {
           isLoading = false;
@@ -191,8 +201,6 @@ class _SignupPageState extends State<SignupPage> {
                     // SizedBox(
                     //   height: MediaQuery.of(context).size.height * 0.00,
                     // ),
-                    TextButton(
-                        onPressed: () {}, child: Text("forget password ?")),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.01,
                     ),
@@ -228,14 +236,13 @@ class _SignupPageState extends State<SignupPage> {
               child: Column(
                 children: [
                   IconButton(
-                    icon: Image.asset(
-                      'assets/images/google.png',
-                      height: MediaQuery.of(context).size.height * 0.045,
-                      width: MediaQuery.of(context).size.width * 0.12,
-                    ),
-                    // iconSize: 50,
-                    onPressed: authService.signInWithGoogle,
-                  )
+                      icon: Image.asset(
+                        'assets/images/google.png',
+                        height: MediaQuery.of(context).size.height * 0.045,
+                        width: MediaQuery.of(context).size.width * 0.12,
+                      ),
+                      // iconSize: 50,
+                      onPressed: () => authService.signInWithGoogle(context))
                 ],
               ),
             ),

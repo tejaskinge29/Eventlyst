@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:Eventlyst/utils/routes.dart';
+import 'package:flutter/material.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 
 class Myadmin extends StatefulWidget {
   const Myadmin({super.key});
@@ -9,7 +10,7 @@ class Myadmin extends StatefulWidget {
 }
 
 class _MyadminState extends State<Myadmin> {
-  final _formfield = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final emailcontroller = TextEditingController();
   final passcontroller = TextEditingController();
   bool passToggle = true;
@@ -19,52 +20,73 @@ class _MyadminState extends State<Myadmin> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text("ORGANISATION"),
+        title: Text("Admin"),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 60),
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
           child: Form(
-            key: _formfield,
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
+              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Center(
-                    child: Text(
-                  "ADMIN LOGIN",
-                  style: TextStyle(
-                      fontSize: 25, fontWeight: FontWeight.w300, height: 2),
-                )),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                 Text(
-                  "Welcome",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  "ADMIN",
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width * 0.06,
+                    fontWeight: FontWeight.w300,
+                    // height: 2,
+                  ),
                 ),
-                SizedBox(
-                  height: 100,
+                Text(
+                  "REGISTRATION",
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width * 0.06,
+                    fontWeight: FontWeight.w200,
+                  ),
                 ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.08),
                 TextFormField(
                   keyboardType: TextInputType.emailAddress,
                   controller: emailcontroller,
                   decoration: InputDecoration(
-                    hintText: "Enter your Organisation Email id",
+                    hintText: "Enter your Admin E-ID",
                     labelText: "Email Id",
-                    border: OutlineInputBorder(),
+                    // border: OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return "Enter Email";
+                      return 'Please enter your Gmail ID';
                     }
-                    bool emailValid = RegExp(
-                            r"^[a-zA-Z0-9.a-zA-Z0-9.!#!$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                        .hasMatch(value);
-                    if (!emailValid) {
-                      return "Enter Valid Email";
+                    // Regular expression to validate Gmail format
+                    RegExp gmailPattern = RegExp(
+                      r"^[a-zA-Z0-9._%+-]+@(gmail\.com|ycce\.in|ycce\.org)$",
+                      // General to access specific structure email id
+                      //   r"^[a-zA-Z0-9.a-zA-Z0-9.!#!$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                      // r"^[a-zA-Z0-9._%+-]+@(gmail\.com|example\.in|example\.org)$",
+                      caseSensitive: false,
+                    );
+                    if (!gmailPattern.hasMatch(value)) {
+                      return 'Please enter a valid Gmail ID';
                     }
+                    return null;
                   },
+                  // validator: (value) {
+                  //   if (value!.isEmpty) {
+                  //     return "Enter Email";
+                  //   }
+                  //   bool emailValid = RegExp(
+                  //           r"^[a-zA-Z0-9.a-zA-Z0-9.!#!$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                  //       .hasMatch(value);
+                  //   if (!emailValid) {
+                  //     return "Enter Valid Email";
+                  //   }
+                  // },
                 ),
                 SizedBox(
-                  height: 30,
+                  height: MediaQuery.of(context).size.height * 0.04,
                 ),
                 TextFormField(
                   keyboardType: TextInputType.visiblePassword,
@@ -73,7 +95,7 @@ class _MyadminState extends State<Myadmin> {
                   decoration: InputDecoration(
                     hintText: "Enter your password",
                     labelText: "Password",
-                    border: OutlineInputBorder(),
+                    // border: OutlineInputBorder(),
                     suffix: InkWell(
                       onTap: () {
                         setState(() {
@@ -93,36 +115,37 @@ class _MyadminState extends State<Myadmin> {
                   },
                 ),
                 SizedBox(
-                  height: 50,
+                  height: MediaQuery.of(context).size.height * 0.04,
                 ),
-                InkWell(
-                  onTap: () {
-                    if (_formfield.currentState!.validate()) {
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      // Navigator.pushNamed(context, '/homeRoute');
                       Navigator.pushNamed(context, MyRoutes.orghomeRoute);
-                      emailcontroller.clear();
-                      passcontroller.clear();
                     }
                   },
-                  child: Container(
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "LogIn",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
+                  child: Text("LogIn"),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(140, 50),
+                    primary: Colors.black,
                   ),
                 ),
                 SizedBox(
-                  height: 40,
+                  height: MediaQuery.of(context).size.height * 0.02,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("login as a Admin :"),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, MyRoutes.adminRoute);
+                        },
+                        child: Text(
+                          "Admin Login",
+                          style: TextStyle(fontSize: 15),
+                        )),
+                  ],
                 ),
                 SizedBox(
                   height: 20,
@@ -135,17 +158,17 @@ class _MyadminState extends State<Myadmin> {
                       style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
-                          fontSize: 19),
+                          fontSize: 15),
                     ),
                     SizedBox(
                       height: 10,
                     ),
                     Text(
-                      "You can follow the events related to your organisation so that you can stay up to date with your organisation  events . ",
+                      "This login is only available for organisation Admin.",
                       style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.w300,
-                          fontSize: 16),
+                          fontSize: 12),
                     ),
                   ],
                 ),

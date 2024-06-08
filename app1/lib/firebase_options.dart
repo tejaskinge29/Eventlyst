@@ -54,7 +54,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBJLTCjSAEnWYBUTQ1L9n2-jJfphAPYuv8',
-    appId: '1:116098067723:android:fcf534b5a4d3bade4b860e',
+    appId: '1:116098067723:android:a35b519451b59aab4b860e',
     messagingSenderId: '116098067723',
     projectId: 'eventlyst-a3a60',
     storageBucket: 'eventlyst-a3a60.appspot.com',
@@ -66,7 +66,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '116098067723',
     projectId: 'eventlyst-a3a60',
     storageBucket: 'eventlyst-a3a60.appspot.com',
-    androidClientId: '116098067723-2oh9otsetopdpopf6q6q36mtoglqmfic.apps.googleusercontent.com',
+    androidClientId: '116098067723-0elco48uev458oo9qg6ijpobfaqpmi61.apps.googleusercontent.com',
     iosClientId: '116098067723-5t1np3617enn2275cfe9r95h491g1n4b.apps.googleusercontent.com',
     iosBundleId: 'com.example.app1',
   );
@@ -77,7 +77,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '116098067723',
     projectId: 'eventlyst-a3a60',
     storageBucket: 'eventlyst-a3a60.appspot.com',
-    androidClientId: '116098067723-2oh9otsetopdpopf6q6q36mtoglqmfic.apps.googleusercontent.com',
+    androidClientId: '116098067723-0elco48uev458oo9qg6ijpobfaqpmi61.apps.googleusercontent.com',
     iosClientId: '116098067723-avd5m9op16h1efkvn2176oev5o3snc2v.apps.googleusercontent.com',
     iosBundleId: 'com.example.app1.RunnerTests',
   );
