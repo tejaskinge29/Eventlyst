@@ -1,6 +1,6 @@
-# app1
+# Eventlyst
 
-A new Flutter project.
+Enhances campus life by promoting event awareness, encouraging student participation and engaging collage community. By solving the problem of scattered event information.
 
 ## Getting Started
 
