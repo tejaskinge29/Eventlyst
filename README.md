@@ -31,9 +31,10 @@ Eventlyst is a cross-platform mobile application designed to help users discover
    ```bash
    git clone https://github.com/yourusername/eventlyst-app.git
 2. Install dependencies
+   ```bash
+   flutter pub get
+4. Run the app
   ```bash
-  flutter pub get
-3. Run the app
-```bash
-flutter run
+  flutter run
+
 
